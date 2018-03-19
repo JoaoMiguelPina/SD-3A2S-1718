@@ -15,7 +15,7 @@ import org.binas.station.domain.exception.BadInitException;
 wsdlLocation = "station.1_0.wsdl",
 name ="StationWebService",
 portName = "StationPort",
-targetNamespace="http:ws.station.binas.org/",
+targetNamespace="http://ws.station.binas.org/",
 serviceName = "StationService"
 )
 
