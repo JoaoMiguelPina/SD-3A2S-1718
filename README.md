@@ -1,15 +1,12 @@
 # Projeto de Sistemas Distribuídos 2017/18 #
 
-Grupo CXX
-*(preencher com identificador de grupo e depois apagar esta linha)*
+Grupo A46
 
-... ... ...
+83473 Hélio Domingos helio.domingos@tecnico.ulisboa.pt
 
-... ... ...
+83530 Miguel Regouga miguelregouga@tecnico.ulisboa.pt
 
-... ... ...
-*(preencher com nome, número e email de membro do grupo e depois apagar esta linha)*
-
+85080 João Pina joaomfpina@tecnico.ulisboa.pt
 
 -------------------------------------------------------------------------------
 **FIM**
