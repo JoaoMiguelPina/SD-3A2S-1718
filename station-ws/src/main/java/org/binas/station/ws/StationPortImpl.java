@@ -5,6 +5,8 @@ import javax.jws.WebService;
 import org.binas.station.domain.Coordinates;
 import org.binas.station.domain.Station;
 import org.binas.station.domain.exception.BadInitException;
+import org.binas.station.domain.exception.NoBinaAvailException;
+import org.binas.station.domain.exception.NoSlotAvailException;
 
 /**
  * This class implements the Web Service port type (interface). The annotations
@@ -37,21 +39,47 @@ public class StationPortImpl implements StationPortType {
 	/** Retrieve information about station. */
 	@Override
 	public StationView getInfo() {
-	 //TODO
-	return null;
+		Station s = Station.getInstance();
+		StationView sv = new StationView();
+		
+		CoordinatesView coord = new CoordinatesView();
+		coord.setX(s.getCoordinates().getX());
+		coord.setY(s.getCoordinates().getY());
+		
+		sv.setAvailableBinas(s.getAvailableBinas());
+		sv.setCapacity(s.getMaxCapacity());
+		sv.setCoordinate(coord);
+		sv.setFreeDocks(s.getFreeDocks());
+		sv.setId(s.getId());
+		sv.setTotalGets(s.getTotalGets());
+		sv.setTotalReturns(s.getTotalReturns());
+		
+		return sv;
 	}
 	
 	/** Return a bike to the station. */
 	@Override
 	public int returnBina() throws NoSlotAvail_Exception {
-	 //TODO
-	return -1;
+		Station s = Station.getInstance();
+		try {
+			return s.returnBina();
+		} catch (NoSlotAvailException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
 	 }
 	
 	 /** Take a bike from the station. */
 	 @Override
 	 public void getBina() throws NoBinaAvail_Exception {
-	  //TODO
+		 Station s = Station.getInstance();
+		 try {
+			s.getBina();
+		} catch (NoBinaAvailException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	 }
 
 	// Test Control operations -----------------------------------------------
