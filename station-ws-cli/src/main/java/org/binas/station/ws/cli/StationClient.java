@@ -72,12 +72,21 @@ public class StationClient implements StationPortType {
 
 	/** UDDI lookup */
 	private void uddiLookup() throws StationClientException {
-		try {
-			UDDINaming uddi = new UDDINaming(this.uddiURL);
-			this.wsURL = uddi.lookup(this.wsName);
-		} catch (UDDINamingException e) {
-			e.printStackTrace();
-		}
+		
+			UDDINaming uddi = null;
+			try {
+				uddi = new UDDINaming(this.uddiURL);
+			} catch (UDDINamingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				this.wsURL = uddi.lookup(this.wsName);
+			} catch (UDDINamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 	}
 
 

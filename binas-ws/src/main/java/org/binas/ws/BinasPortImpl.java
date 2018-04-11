@@ -130,8 +130,6 @@ public class BinasPortImpl implements BinasPortType {
 			}
 			
 			
-			String res_aux;
-			
 			System.out.println("PING");
 			
 			for (UDDIRecord stationName : stations) {
