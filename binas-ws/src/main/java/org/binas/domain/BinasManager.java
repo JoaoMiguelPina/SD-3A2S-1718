@@ -81,10 +81,6 @@ public class BinasManager {
 		this.uddiURL = uddiURL;
 		this.wsName = wsName;
 		this.wsURL = wsURL;
-		System.out.println(this.wsURL + "Manager");
-		System.out.println(this.uddiURL + "Manager");
-		System.out.println(this.wsName + "Manager");
-		System.out.println(this.getUddiUrl() + "ManagerGETTER");
 	}
 
 	/** constructor with provided web service URL */

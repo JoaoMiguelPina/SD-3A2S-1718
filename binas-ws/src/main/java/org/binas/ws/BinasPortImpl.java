@@ -117,17 +117,24 @@ public class BinasPortImpl implements BinasPortType {
 			
 			UDDINaming UDDIname = this.endpointManager.getUddiNaming();
 			Collection<String> stations = UDDIname.list("A46_Station%");
-			StationClient sc;
-			
-			
-			
 			for (String stationName : stations) {
-				String url = UDDIname.lookup(stationName);
-				sc = new StationClient(url);
-				res += sc.testPing(inputMessage) + "\n";	
+				System.out.println("conax");
+				System.out.println(stationName);
 			}
 			
-			return "puta";
+			StationClient sc;
+			String res_aux;
+			
+			System.out.println("PING");
+			
+			for (String stationName : stations) {
+				sc = new StationClient(stationName);
+				res_aux = sc.testPing(inputMessage);
+				res += res_aux + "\n";
+				System.out.println("res_aux: " + res_aux);
+			}
+			
+			return res;
 		
 		}
 		catch (Exception e){
