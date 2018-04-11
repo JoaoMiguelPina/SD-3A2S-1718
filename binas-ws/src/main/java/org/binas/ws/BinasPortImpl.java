@@ -16,13 +16,14 @@ import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
  * below "map" the Java class to the WSDL definitions.
  */
  //TODO
-@WebService(endpointInterface = "org.binas.station.ws.StationPortType",
-wsdlLocation = "station.1_0.wsdl",
-name ="StationWebService",
-portName = "StationPort",
-targetNamespace="http://ws.station.binas.org/",
-serviceName = "StationService"
+@WebService(endpointInterface = "org.binas.ws.BinasPortType",
+wsdlLocation = "binas.1_0.wsdl",
+name ="BinasWebService",
+portName = "BinasPort",
+targetNamespace="http://ws.binas.org/",
+serviceName = "BinasService"
 )
+
 
 public class BinasPortImpl implements BinasPortType {
 
@@ -162,23 +163,6 @@ public class BinasPortImpl implements BinasPortType {
 		
 	}
 	
-	@Override
-	public void getBina() throws NoBinaAvail_Exception {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public StationView getInfo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public int returnBina() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
 }

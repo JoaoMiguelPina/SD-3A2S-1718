@@ -19,11 +19,11 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<wsdl.directory>${basedir}/../binas-ws/src/main/resources</wsdl.directory>
-		<wsdl.filename>binas.wsdl</wsdl.filename>
+		<wsdl.filename>binas.1_0.wsdl</wsdl.filename>
 
 		<mainclass>org.binas.ws.cli.BinasClientApp</mainclass>
 
-		<group.id>CXX</group.id>
+		<group.id>A46</group.id>
 		<uddi.url>http://localhost:9090</uddi.url>
 		<ws.name>${group.id}_Binas</ws.name>
 		<supplier.ws.name>${group.id}_Binas</supplier.ws.name>
@@ -120,4 +120,5 @@
 		</plugins>
 	</build>
 
+	<url>http://a46:eLEAO3h@uddi.sd.rnl.tecnico.ulisboa.pt:9090/</url>
 </project>
