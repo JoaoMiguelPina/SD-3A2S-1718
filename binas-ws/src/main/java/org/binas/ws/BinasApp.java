@@ -6,12 +6,10 @@ import org.binas.domain.BinasManager;
 public class BinasApp {
 
 	public static void main(String[] args) throws Exception {
+		
+		BinasManager binasManager = BinasManager.getInstance();
 		// Check arguments
-				if (args.length < 1) {
-					System.err.println("Argument(s) missing!");
-					System.err.println("Usage: java " + BinasApp.class.getName() + " wsURL");
-					return;
-				}
+		
 				
 				
 				
@@ -23,21 +21,26 @@ public class BinasApp {
 					System.out.println(wsURL);
 					System.out.println(uddiURL);
 					System.out.println(wsName);
-					BinasManager endpoint = new BinasManager(uddiURL, wsName, wsURL);
+					
+					BinasManager.getInstance().setBinas(uddiURL, wsName, wsURL);
+				}
+				
+				else {
+					System.err.println("Argument(s) missing!");
+					System.err.println("Usage: java " + BinasApp.class.getName() + " wsURL");
+					return;
+				}
 					
 					try {
-						endpoint.start();
-						endpoint.awaitConnections();
+						binasManager.start();
+						binasManager.awaitConnections();
 					} finally {
-						endpoint.stop();
+						binasManager.stop();
 					}
 				}
 				
 
 				// Create server implementation object
-				
-				
-				
-	}
+			
 
 }

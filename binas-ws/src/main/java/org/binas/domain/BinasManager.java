@@ -37,11 +37,11 @@ public class BinasManager {
 	 /** Get UDDI Naming instance for contacting UDDI server */
 	 public synchronized UDDINaming getUddiNaming() throws UDDINamingException {
 		 
-		 if (uddiNaming == null) {
-			 this.uddiNaming = new UDDINaming(uddiURL);
-		 }
+		 //if (uddiNaming == null) {
+			 this.uddiNaming = new UDDINaming(this.uddiURL);
+		 //}
 		 
-		 return this.uddiNaming;
+		 return uddiNaming;
 	 }
 	 
 		/** output option */
@@ -131,7 +131,7 @@ public class BinasManager {
 			}
 			throw e;
 		}
-		//publishToUDDI();
+		publishToUDDI();
 	}
 
 	public void awaitConnections() {
@@ -163,17 +163,32 @@ public class BinasManager {
 			}
 		}
 		this.portImpl = null;
-		//unpublishFromUDDI();
+		unpublishFromUDDI();
 	}
 
 	/* UDDI */
 
 	void publishToUDDI() throws Exception {
-		// TODO
+		this.uddiNaming = new UDDINaming(uddiURL);
+		this.uddiNaming.rebind(this.wsName, this.wsURL);
 	}
 
 	void unpublishFromUDDI() {
-		// TODO
+		if (this.uddiNaming != null) {
+			try {
+				this.uddiNaming.unbind(this.wsName);
+			} catch (UDDINamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void setBinas(String uddiURL2, String wsName2, String wsURL2) {
+		this.uddiURL = uddiURL2;
+		this.wsName = wsName2;
+		this.wsURL = wsURL2;
+		
 	}
 
 }

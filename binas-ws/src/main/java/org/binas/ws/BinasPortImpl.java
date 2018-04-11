@@ -9,6 +9,7 @@ import org.binas.domain.BinasManager;
 import org.binas.station.ws.cli.StationClient;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
+import pt.ulisboa.tecnico.sdis.ws.uddi.UDDIRecord;
 
 
 /**
@@ -111,36 +112,41 @@ public class BinasPortImpl implements BinasPortType {
 
 	@Override
 	public String testPing(String inputMessage) {
+		UDDINaming UDDIname;
 		String res = "";
+		Collection<UDDIRecord> stations;
+		
 		
 		try {
 			
-			UDDINaming UDDIname = this.endpointManager.getUddiNaming();
-			Collection<String> stations = UDDIname.list("A46_Station%");
-			for (String stationName : stations) {
+			UDDIname = this.endpointManager.getUddiNaming();
+			stations = UDDIname.listRecords("A46_Station%");
+			
+			res += "Founded " + stations.size() + "stations.\n";
+			
+			for (UDDIRecord stationName : stations) {
 				System.out.println("conax");
 				System.out.println(stationName);
 			}
 			
-			StationClient sc;
+			
 			String res_aux;
 			
 			System.out.println("PING");
 			
-			for (String stationName : stations) {
-				sc = new StationClient(stationName);
-				res_aux = sc.testPing(inputMessage);
-				res += res_aux + "\n";
-				System.out.println("res_aux: " + res_aux);
+			for (UDDIRecord stationName : stations) {
+				res += "[Pinging Station" + stationName.getOrgName() + "][Awnser]";
+				StationClient sc = new StationClient(stationName.getUrl());
+				res += sc.testPing(inputMessage) + "\n";
+				System.out.println("res_aux: " + res);
 			}
-			
-			return res;
+		
 		
 		}
 		catch (Exception e){
 			e.printStackTrace();
 		}
-		return "puta";
+		return res;
 		
 	}
 

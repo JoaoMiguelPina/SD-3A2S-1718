@@ -121,20 +121,22 @@ public class StationEndpointManager {
 
 	/* UDDI */
 
-	void publishToUDDI() throws Exception {
+	private synchronized void publishToUDDI() throws Exception {
 		System.out.printf("Publishing '%s' to UDDI at %s%n", wsName, uddiURL);
 		this.uddiNaming = new UDDINaming(this.uddiURL);
 		this.uddiNaming.rebind(this.wsName, this.wsURL);
 	}
 
-	void unpublishFromUDDI() {
-		try {
-			this.uddiNaming.unbind(this.wsName);
-		} catch (UDDINamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private synchronized void unpublishFromUDDI() {
+		if (this.uddiNaming != null) {
+			try {
+				this.uddiNaming.unbind(this.wsName);
+			} catch (UDDINamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.printf("Deleted '%s' from UDDI%n", wsName);
 		}
-		System.out.printf("Deleted '%s' from UDDI%n", wsName);
 	}
 
 }
