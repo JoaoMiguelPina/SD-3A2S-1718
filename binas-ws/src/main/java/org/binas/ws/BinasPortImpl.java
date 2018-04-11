@@ -116,15 +116,14 @@ public class BinasPortImpl implements BinasPortType {
 		String res = "";
 		Collection<UDDIRecord> stations;
 		
-		
 		try {
-			
 			UDDIname = this.endpointManager.getUddiNaming();
 			stations = UDDIname.listRecords("A46_Station%");
 			
 			res += "Founded " + stations.size() + "stations.\n";
 			
 			for (UDDIRecord stationName : stations) {
+<<<<<<< HEAD
 				System.out.println("conax");
 				System.out.println(stationName);
 			}
@@ -133,13 +132,13 @@ public class BinasPortImpl implements BinasPortType {
 			System.out.println("PING");
 			
 			for (UDDIRecord stationName : stations) {
+=======
+>>>>>>> 9e4a621d26d7771b01bf03c64fc556bdb8ca2025
 				res += "[Pinging Station" + stationName.getOrgName() + "][Awnser]";
 				StationClient sc = new StationClient(stationName.getUrl());
 				res += sc.testPing(inputMessage) + "\n";
-				System.out.println("res_aux: " + res);
 			}
-		
-		
+			System.out.println(res);
 		}
 		catch (Exception e){
 			e.printStackTrace();
@@ -152,12 +151,10 @@ public class BinasPortImpl implements BinasPortType {
 	public void testClear() {
 		try {
 			UDDINaming UDDIname = this.endpointManager.getUddiNaming();
-			Collection<String> stations = UDDIname.list("A46_%");
+			Collection<UDDIRecord> stations = UDDIname.listRecords("A46_%");
 			StationClient sc;
-			
-			for (String stationName : stations) {
-				String url = UDDIname.lookup(stationName);
-				sc = new StationClient(url);
+			for (UDDIRecord stationName : stations) {
+				sc = new StationClient(stationName.getUrl());
 				sc.testClear();
 			}
 		
