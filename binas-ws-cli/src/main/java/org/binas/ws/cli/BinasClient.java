@@ -1,6 +1,12 @@
 package org.binas.ws.cli;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.jws.WebService;
+import javax.xml.ws.BindingProvider;
+
+import org.binas.ws.*;
 
 /**
  * Client.
@@ -74,7 +80,7 @@ public class BinasClient implements BinasPortType {
 		 BindingProvider bindingProvider = (BindingProvider) port;
 		 Map<String, Object> requestContext = bindingProvider
 		 .getRequestContext();
-		 requestContext.put(ENDPOINT_ADDRESS_PROPERTY, wsURL);
+		 requestContext.put("ENDPOINT_ADDRESS_PROPERTY", wsURL);
 		 }
     }
 

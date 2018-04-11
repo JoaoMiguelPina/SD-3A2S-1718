@@ -12,18 +12,32 @@ public class BinasApp {
 					System.err.println("Usage: java " + BinasApp.class.getName() + " wsURL");
 					return;
 				}
-				String wsURL = args[0];
-				String uddiURL = args[1];
-				String wsName = args[2];
+				
+				
+				
+				if (args.length == 3) {
+					String wsURL = args[0];
+					String uddiURL = args[1];
+					String wsName = args[2];
+					
+					System.out.println(wsURL);
+					System.out.println(uddiURL);
+					System.out.println(wsName);
+					BinasManager endpoint = new BinasManager(uddiURL, wsName, wsURL);
+					
+					try {
+						endpoint.start();
+						endpoint.awaitConnections();
+					} finally {
+						endpoint.stop();
+					}
+				}
+				
 
 				// Create server implementation object
-				BinasManager endpoint = new BinasManager(wsURL,uddiURL,wsName);
-				try {
-					endpoint.start();
-					endpoint.awaitConnections();
-				} finally {
-					endpoint.stop();
-				}
+				
+				
+				
 	}
 
 }

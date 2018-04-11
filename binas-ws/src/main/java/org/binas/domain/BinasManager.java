@@ -8,8 +8,53 @@ import org.binas.ws.BinasPortImpl;
 import org.binas.ws.BinasPortType;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
+import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINamingException;
 
 public class BinasManager {
+	
+	/** Web Service location to publish */
+	private String wsURL;
+	
+	/** UDDI naming server location */
+	private String uddiURL = null;
+	/** Web Service name */
+	private String wsName = null;
+	
+	/** Web Service end point */
+	private Endpoint endpoint = null;
+	
+	/** Port implementation */
+	private BinasPortImpl portImpl = new BinasPortImpl(this);
+
+	 /** Obtain Port implementation */
+	 public BinasPortType getPort() {
+		 return portImpl;
+	 }
+	 
+	 /** UDDI Naming instance for contacting UDDI server */
+	 private UDDINaming uddiNaming = null;
+	 
+	 /** Get UDDI Naming instance for contacting UDDI server */
+	 public synchronized UDDINaming getUddiNaming() throws UDDINamingException {
+		 
+		 if (uddiNaming == null) {
+			 this.uddiNaming = new UDDINaming(uddiURL);
+		 }
+		 
+		 return this.uddiNaming;
+	 }
+	 
+		/** output option */
+		private boolean verbose = true;
+
+		public boolean isVerbose() {
+			return verbose;
+		}
+
+		public void setVerbose(boolean verbose) {
+			this.verbose = verbose;
+		}
+	
 
 	// Singleton -------------------------------------------------------------
 
@@ -28,55 +73,18 @@ public class BinasManager {
 		return SingletonHolder.INSTANCE;
 	}
 
+
 	
-	/** UDDI naming server location */
-	private String uddiURL = null;
-	/** Web Service name */
-	private String wsName = null;
-
-	/** Get Web Service UDDI publication name */
-	public String getWsName() {
-		return wsName;
-	}
-
-	/** Web Service location to publish */
-	private String wsURL = null;
-
-	/** Port implementation */
-	private BinasPortImpl portImpl = new BinasPortImpl(this);
-
-	 /** Obtain Port implementation */
-	 public BinasPortType getPort() {
-		 return portImpl;
-	 }
-
-	/** Web Service end point */
-	private Endpoint endpoint = null;
-
-	 /** UDDI Naming instance for contacting UDDI server */
-	 private UDDINaming uddiNaming = null;
 	
-	 /** Get UDDI Naming instance for contacting UDDI server */
-	 public UDDINaming getUddiNaming() {
-		 return uddiNaming;
-	 }
-
-	/** output option */
-	private boolean verbose = true;
-
-	public boolean isVerbose() {
-		return verbose;
-	}
-
-	public void setVerbose(boolean verbose) {
-		this.verbose = verbose;
-	}
-
 	/** constructor with provided UDDI location, WS name, and WS URL */
 	public BinasManager(String uddiURL, String wsName, String wsURL) {
 		this.uddiURL = uddiURL;
 		this.wsName = wsName;
 		this.wsURL = wsURL;
+		System.out.println(this.wsURL + "Manager");
+		System.out.println(this.uddiURL + "Manager");
+		System.out.println(this.wsName + "Manager");
+		System.out.println(this.getUddiUrl() + "ManagerGETTER");
 	}
 
 	/** constructor with provided web service URL */
@@ -84,6 +92,30 @@ public class BinasManager {
 		this.wsName = wsName;
 		this.wsURL = wsURL;
 	}
+
+	/** Get Web Service UDDI publication name */
+	public String getWsName() {
+		return wsName;
+	}
+	
+	public String getUddiUrl() {
+		System.out.println(this.uddiURL + "GETTER");
+		return uddiURL;
+	}
+
+
+
+
+
+
+
+
+	
+
+
+
+
+	
 
 	/* end point management */
 
@@ -103,7 +135,7 @@ public class BinasManager {
 			}
 			throw e;
 		}
-		publishToUDDI();
+		//publishToUDDI();
 	}
 
 	public void awaitConnections() {
@@ -135,7 +167,7 @@ public class BinasManager {
 			}
 		}
 		this.portImpl = null;
-		unpublishFromUDDI();
+		//unpublishFromUDDI();
 	}
 
 	/* UDDI */

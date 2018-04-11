@@ -35,7 +35,7 @@ public class BinasPortImpl implements BinasPortType {
 
 	/** Constructor receives a reference to the endpoint manager. */
 	public BinasPortImpl(BinasManager endpointManager) {
-		this.endpointManager = endpointManager.getInstance();
+		this.endpointManager = endpointManager;
 	}
 
 	@Override
@@ -111,23 +111,30 @@ public class BinasPortImpl implements BinasPortType {
 
 	@Override
 	public String testPing(String inputMessage) {
+		String res = "";
+		
 		try {
+			
 			UDDINaming UDDIname = this.endpointManager.getUddiNaming();
-			Collection<String> stations = UDDIname.list("A46_%");
+			Collection<String> stations = UDDIname.list("A46_Station%");
 			StationClient sc;
+			
+			
 			
 			for (String stationName : stations) {
 				String url = UDDIname.lookup(stationName);
 				sc = new StationClient(url);
-				System.out.println(sc.testPing(inputMessage));
+				res += sc.testPing(inputMessage) + "\n";	
 			}
+			
+			return "puta";
 		
 		}
 		catch (Exception e){
 			e.printStackTrace();
 		}
+		return "puta";
 		
-		return null;
 	}
 
 	@Override
