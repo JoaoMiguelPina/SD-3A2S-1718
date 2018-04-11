@@ -19,7 +19,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<mainclass>org.binas.ws.BinasApp</mainclass>
-		<uddi.url>http://localhost:9090</uddi.url>
+		<uddi.url>http://a46:eLEAO3h@uddi.sd.rnl.tecnico.ulisboa.pt:9090</uddi.url>
 		<group.id>A46</group.id>
 
 		<ws.name>${group.id}_Binas</ws.name>
@@ -134,5 +134,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<url>http://a46:eLEAO3h@uddi.sd.rnl.tecnico.ulisboa.pt:9090/</url>
 </project>

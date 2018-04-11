@@ -30,7 +30,7 @@
 
 		
 		<ws.name>A46_Station${ws.i}</ws.name>
-		<uddi.url>http://localhost:9090</uddi.url>
+		<uddi.url>http://a46:eLEAO3h@uddi.sd.rnl.tecnico.ulisboa.pt:9090</uddi.url>
 
 	</properties>
 
@@ -127,5 +127,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<url>http://a46:eLEAO3h@uddi.sd.rnl.tecnico.ulisboa.pt:9090/</url>
 </project>
