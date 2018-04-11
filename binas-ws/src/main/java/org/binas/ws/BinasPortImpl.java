@@ -123,7 +123,6 @@ public class BinasPortImpl implements BinasPortType {
 			res += "Founded " + stations.size() + "stations.\n";
 			
 			for (UDDIRecord stationName : stations) {
-<<<<<<< HEAD
 				System.out.println("conax");
 				System.out.println(stationName);
 			}
@@ -132,8 +131,6 @@ public class BinasPortImpl implements BinasPortType {
 			System.out.println("PING");
 			
 			for (UDDIRecord stationName : stations) {
-=======
->>>>>>> 9e4a621d26d7771b01bf03c64fc556bdb8ca2025
 				res += "[Pinging Station" + stationName.getOrgName() + "][Awnser]";
 				StationClient sc = new StationClient(stationName.getUrl());
 				res += sc.testPing(inputMessage) + "\n";
