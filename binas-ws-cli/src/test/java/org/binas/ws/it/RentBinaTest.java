@@ -3,14 +3,15 @@ package org.binas.ws.it;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.binas.station.ws.cli.StationClient;
-import org.binas.station.ws.it.BaseIT;
+//import org.binas.station.ws.cli.StationClient;
+//import org.binas.station.ws.it.BaseIT;
 import org.binas.ws.AlreadyHasBina_Exception;
 import org.binas.ws.InvalidStation_Exception;
 import org.binas.ws.NoBinaAvail_Exception;
 import org.binas.ws.NoCredit_Exception;
 import org.binas.ws.UserNotExists_Exception;
 import org.binas.ws.cli.BinasClient;
+import org.binas.ws.cli.BinasClientException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ public class RentBinaTest {
 	
 	
 	@Before
-	public void setup() {
+	public void setup() throws BinasClientException, IOException {
 		testProps = new Properties();
 		try {
 			testProps.load(RentBinaTest.class.getResourceAsStream(TEST_PROP_FILE));
@@ -53,7 +54,7 @@ public class RentBinaTest {
 	}
 	
 	@Test
-	public void success{
+	public void success(){
 		
 	}
 	

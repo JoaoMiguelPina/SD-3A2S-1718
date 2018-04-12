@@ -14,11 +14,11 @@ public class User {
 	
 	private HashMap<String, User> users = new HashMap<String, User>();
 	
-	public User (String email, boolean hasBina, int credit) throws InvalidEmail_Exception, EmailExists_Exception {
+	public User (String email) throws InvalidEmail_Exception, EmailExists_Exception {
 		checkEmail(email);
 		this.email = email;
-		this.hasBina = hasBina;
-		this.credit = credit;
+		this.hasBina = false;
+		this.credit = 10;
 	}
 	
 	public void checkEmail(String email) throws InvalidEmail_Exception, EmailExists_Exception {
