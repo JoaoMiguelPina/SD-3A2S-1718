@@ -120,7 +120,7 @@ public class BinasPortImpl implements BinasPortType {
 			UDDIname = this.endpointManager.getUddiNaming();
 			stations = UDDIname.listRecords("A46_Station%");
 			
-			res += "Founded " + stations.size() + "stations.\n";
+			res += "Found " + stations.size() + "stations.\n";
 			
 			for (UDDIRecord stationName : stations) {
 				System.out.println("conax");
@@ -165,7 +165,22 @@ public class BinasPortImpl implements BinasPortType {
 	@Override
 	public void testInitStation(String stationId, int x, int y, int capacity, int returnPrize)
 			throws BadInit_Exception {
-		// TODO Auto-generated method stub
+		
+		UDDINaming UDDIname;
+		String stationURL;
+		StationClient sc;
+		
+		try {
+			UDDIname = this.endpointManager.getUddiNaming();
+			stationURL = UDDIname.lookup(stationId);
+			sc = new StationClient(stationURL);
+			sc.testInit(x, y, capacity, returnPrize);
+			
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+		
 		
 	}
 
