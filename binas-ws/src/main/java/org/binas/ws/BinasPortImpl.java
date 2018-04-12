@@ -131,8 +131,22 @@ public class BinasPortImpl implements BinasPortType {
 
 	@Override
 	public void rentBina(String stationId, String email) throws AlreadyHasBina_Exception, InvalidStation_Exception,
-			NoBinaAvail_Exception, NoCredit_Exception, UserNotExists_Exception {
-		// TODO Auto-generated method stub
+			NoBinaAvail_Exception, NoCredit_Exception, UserNotExists_Exception, InvalidEmail_Exception {
+		
+		StationClient s = new StationClient(this.endpointManager.getUddiUrl(), stationId);
+		org.binas.station.ws.StationView sv = s.getInfo();
+		
+		User user = null;
+		user = user.getUser(email);
+		UserView userView = user.getUserView();
+		
+		if (sv.getAvailableBinas() == 0) throw new NoBinaAvail_Exception("There is no bina available at this station.", null);
+		if (userView.getCredit() < 1) throw new NoCredit_Exception("User does not have enought credits to rent the bina,", null);
+		else {
+			s.getBina();
+			user.setHasBina(true);
+			user.removeOneCredit();
+		}
 		
 	}
 
@@ -158,6 +172,8 @@ public class BinasPortImpl implements BinasPortType {
 			}
 		}
 		throw new NoBinaRentedException();
+		
+		
 		
 	}
 

@@ -56,6 +56,22 @@ public class User {
 		users.put(user.getEmail(), user);
 	}
 	
+	public void addCredit (int credit) {
+		this.credit += credit;
+	}
+	
+	public void addOneCredit () {
+		this.credit += 1;
+	}
+	
+	public void removeCredit (int credit) {
+		this.credit -= credit;
+	}
+	
+	public void removeOneCredit () {
+		this.credit -= 1;
+	}
+	
 	public User getUser(String email) throws InvalidEmail_Exception{
 		if (users.get(email) == null) throw new InvalidEmail_Exception("The email " + email + " is not registered.", null);
 		return users.get(email);
