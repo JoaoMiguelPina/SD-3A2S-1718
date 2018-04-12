@@ -82,14 +82,21 @@ public class BinasPortImpl implements BinasPortType {
 
 	@Override
 	public int getCredit(String email) throws UserNotExists_Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		User user = null;
+		int credit = 0;
+		try {
+			user = user.getUser(email);
+			credit = user.getCredit();
+		} catch (InvalidEmail_Exception e) {
+			System.out.printf("Email syntax (" + e + ") not valid.");
+		}
+		return credit;
 	}
 
 	@Override
 	public UserView activateUser(String email) throws EmailExists_Exception, InvalidEmail_Exception {
 		User user = null;
-		user.getUser(email);
+		user = user.getUser(email);
 		UserView userView = user.getUserView();
 		return userView;
 	}

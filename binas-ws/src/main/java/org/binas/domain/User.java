@@ -24,8 +24,8 @@ public class User {
 	public void checkEmail(String email) throws InvalidEmail_Exception, EmailExists_Exception {
 		
 		String pattern = "^(([a-zA-Z0-9]+)|([a-zA-Z0-9]+\\.?[a-zA-Z0-9]+)+)@(([a-zA-Z0-9]+)|([a-zA-Z0-9]+\\.?[a-zA-Z0-9]+)+)";
-		if(users.containsKey(email)) throw new EmailExists_Exception("Email already exists.", null);
-		if(!email.matches(pattern)) throw new InvalidEmail_Exception("Email syntax not valid.", null);
+		if(users.containsKey(email)) throw new EmailExists_Exception(email, null);
+		if(!email.matches(pattern)) throw new InvalidEmail_Exception(email, null);
 	}
 	
 	public String getEmail() {
