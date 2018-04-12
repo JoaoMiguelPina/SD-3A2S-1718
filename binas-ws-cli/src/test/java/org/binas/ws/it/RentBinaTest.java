@@ -6,12 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.util.Properties;
 
-<<<<<<< HEAD
 import org.binas.ws.it.BaseIT;
-=======
-//import org.binas.station.ws.cli.StationClient;
-//import org.binas.station.ws.it.BaseIT;
->>>>>>> 13db0a1d9123f4248529e161a4fb2886f6e3e908
 import org.binas.ws.AlreadyHasBina_Exception;
 import org.binas.ws.BadInit_Exception;
 import org.binas.ws.EmailExists_Exception;
@@ -21,11 +16,8 @@ import org.binas.ws.NoBinaAvail_Exception;
 import org.binas.ws.NoCredit_Exception;
 import org.binas.ws.UserNotExists_Exception;
 import org.binas.ws.cli.BinasClient;
-<<<<<<< HEAD
 import org.junit.After;
-=======
 import org.binas.ws.cli.BinasClientException;
->>>>>>> 13db0a1d9123f4248529e161a4fb2886f6e3e908
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,14 +29,9 @@ public class RentBinaTest extends BaseIT{
 	
 	String userMail = "sd.rent@tecnico.pt";
 	
-<<<<<<< HEAD
+	@Test
 	public void success() {
-=======
-	/*
-	@Before
-	public void setup() throws BinasClientException, IOException {
-		testProps = new Properties();
->>>>>>> 13db0a1d9123f4248529e161a4fb2886f6e3e908
+
 		try {
 			
 			//STATION 1
@@ -263,10 +250,10 @@ public class RentBinaTest extends BaseIT{
 	public void UserNotExistsException() {
 		
 		try {
-			//client.testInitStation(stationId1, 10, 10, 5, 2);
+			client.testInitStation(stationId1, 10, 10, 5, 2);
 			client.rentBina(stationId1, userMail);
-		//} catch (BadInit_Exception e) {
-			//System.out.println("There was an error while creating station. Check output: " + e);
+		} catch (BadInit_Exception e) {
+			System.out.println("There was an error while creating station. Check output: " + e);
 		} catch (AlreadyHasBina_Exception e) {
 			System.out.println("The provided user (" + e + ") already had rent a bina.");
 		} catch (InvalidStation_Exception e) {
