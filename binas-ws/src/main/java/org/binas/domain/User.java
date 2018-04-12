@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.binas.ws.EmailExists_Exception;
 import org.binas.ws.InvalidEmail_Exception;
+import org.binas.ws.UserNotExists_Exception;
 import org.binas.ws.UserView;
 
 public class User {
@@ -12,20 +13,22 @@ public class User {
 	private boolean hasBina;
 	private int credit;
 	
-	private HashMap<String, User> users = new HashMap<String, User>();
+	private static HashMap<String, User> users = new HashMap<String, User>();
 	
-	public User (String email, boolean hasBina, int credit) throws InvalidEmail_Exception, EmailExists_Exception {
+	public User (String email) throws InvalidEmail_Exception, EmailExists_Exception {
 		checkEmail(email);
 		this.email = email;
-		this.hasBina = hasBina;
-		this.credit = credit;
+		this.hasBina = false;
+		this.credit = 10;
+		addUser(this);
 	}
 	
 	public void checkEmail(String email) throws InvalidEmail_Exception, EmailExists_Exception {
 		
 		String pattern = "^(([a-zA-Z0-9]+)|([a-zA-Z0-9]+\\.?[a-zA-Z0-9]+)+)@(([a-zA-Z0-9]+)|([a-zA-Z0-9]+\\.?[a-zA-Z0-9]+)+)";
-		if(users.containsKey(email)) throw new EmailExists_Exception(email, null);
+		if(users.get(email) != null) throw new EmailExists_Exception(email, null);
 		if(!email.matches(pattern)) throw new InvalidEmail_Exception(email, null);
+		
 	}
 	
 	public String getEmail() {
@@ -72,9 +75,10 @@ public class User {
 		this.credit -= 1;
 	}
 	
-	public User getUser(String email) throws InvalidEmail_Exception{
-		if (users.get(email) == null) throw new InvalidEmail_Exception("The email " + email + " is not registered.", null);
-		return users.get(email);
+	public static User getUser(String email) throws UserNotExists_Exception{
+		User user = users.get(email);
+		if (user == null) throw new UserNotExists_Exception("The email " + email + " is not registered.", null);
+		return user;
 	}
 	
 	public void deleteUser(String email) {
