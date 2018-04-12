@@ -18,4 +18,6 @@ public class PingIT extends BaseIT {
 		// assertNotNull(binasClient.testPing("test"));
     }
 
+    
+   
 }
