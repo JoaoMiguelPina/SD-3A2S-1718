@@ -133,10 +133,25 @@ public class BinasPortImpl implements BinasPortType {
 	@Override
 	public void returnBina(String stationId, String email)
 			throws FullStation_Exception, InvalidStation_Exception, NoBinaRented_Exception, UserNotExists_Exception {
-//		UDDINaming UDDIname = this.endpointManager.getUddiNaming();
-//		String url = UDDIname.lookup(stationId);
-//		StationClient s = new StationClient(url);
-//		s.returnBina();
+		
+		StationClient s = new StationClient(this.endpointManager.getUddiUrl(), stationId);
+		org.binas.station.ws.StationView sv = s.getInfo();
+		
+		User user = null;
+		user = user.getUser(email);
+		UserView uv = user.getUserView();
+		
+		if (user.hasBina()) {
+			if (sv.getFreeDocks() == 0) {
+				throw new FullStation_Exception("This station is full", null);
+			}
+			else{
+				int bonus = s.returnBina();
+				user.setHasBina(false);
+				user.addCredit(bonus);
+			}
+		}
+		throw new NoBinaRentedException();
 		
 	}
 
