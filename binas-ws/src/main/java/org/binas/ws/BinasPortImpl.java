@@ -7,6 +7,7 @@ import javax.jws.WebService;
 
 import org.binas.domain.BinasManager;
 import org.binas.domain.User;
+import org.binas.station.ws.NoSlotAvail_Exception;
 import org.binas.station.ws.cli.StationClient;
 import org.binas.station.ws.cli.StationClientException;
 
@@ -164,24 +165,34 @@ public class BinasPortImpl implements BinasPortType {
 	public void returnBina(String stationId, String email)
 			throws FullStation_Exception, InvalidStation_Exception, NoBinaRented_Exception, UserNotExists_Exception {
 		
-		StationClient s = new StationClient(this.endpointManager.getUddiUrl(), stationId);
-		org.binas.station.ws.StationView sv = s.getInfo();
-		
-		User user = null;
-		user = user.getUser(email);
-		UserView uv = user.getUserView();
-		
-		if (user.doesHaveBina()) {
-			if (sv.getFreeDocks() == 0) {
-				throw new FullStation_Exception("This station is full", null);
+		StationClient s;
+		try {
+			s = new StationClient(this.endpointManager.getUddiUrl(), stationId);
+			org.binas.station.ws.StationView sv = s.getInfo();
+			
+			User user = null;
+			user = user.getUser(email);
+			UserView uv = user.getUserView();
+			
+			if (user.doesHaveBina()) {
+				if (sv.getFreeDocks() == 0) {
+					throw new FullStation_Exception("This station is full", null);
+				}
+				else{
+					int bonus = s.returnBina();
+					user.setHasBina(false);
+					user.addCredit(bonus);
+				}
 			}
-			else{
-				int bonus = s.returnBina();
-				user.setHasBina(false);
-				user.addCredit(bonus);
-			}
+		} catch (StationClientException e) {
+			System.out.println("There was an error while calling the StationClient. Check output: " + e);
+		} catch (InvalidEmail_Exception e) {
+			System.out.println("The provided email (" + e + ") is invalid.");
+		} catch (NoSlotAvail_Exception e) {
+			System.out.println("There is no slot available at this station.");
 		}
-		throw new NoBinaRentedException();
+		
+		throw new NoBinaRented_Exception(email, null);
 		
 		
 		
