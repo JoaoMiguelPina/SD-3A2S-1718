@@ -70,7 +70,16 @@ public class BinasPortImpl implements BinasPortType {
 				result.add(this.getInfoStation(closest.getWsName()));
 			}
 			
-		} catch (Exception e) {
+		} catch (UDDINamingException e) {
+			System.out.println("There was an error while calling UDDINaming at listStations(). Check output: ");
+			e.printStackTrace();
+		}
+		catch (StationClientException e) {
+			System.out.println("There was an error while calling the StationClient at listStations(). Check output: ");
+			e.printStackTrace();
+		}
+		catch (InvalidStation_Exception e) {
+			System.out.println("The chosen Station is invalid at listStations(). Check output: ");
 			e.printStackTrace();
 		}
 		
@@ -91,7 +100,12 @@ public class BinasPortImpl implements BinasPortType {
 			s = new StationClient(url);
 			svS = s.getInfo();
 			
-		} catch (Exception e) {
+		} catch (UDDINamingException e) {
+			System.out.println("There was an error while calling UDDINaming at getInfoStation(). Check output: ");
+			e.printStackTrace();
+		}
+		catch (StationClientException e) {
+			System.out.println("There was an error while calling the StationClient at getInfoStation(). Check output: ");
 			e.printStackTrace();
 		}
 		
@@ -259,8 +273,16 @@ public class BinasPortImpl implements BinasPortType {
 			sc = new StationClient(stationURL);
 			sc.testInit(x, y, capacity, returnPrize);
 			
+		}catch (UDDINamingException e) {
+			System.out.println("There was an error while calling UDDINaming at testInitStation(). Check output: ");
+			e.printStackTrace();
 		}
-		catch (Exception e){
+		catch (StationClientException e) {
+			System.out.println("There was an error while calling the StationClient at testInitStation(). Check output: ");
+			e.printStackTrace();
+		}
+		catch (org.binas.station.ws.BadInit_Exception e) {
+			System.out.println("There was an error while trying to Init at testInitStation(). Check output: ");
 			e.printStackTrace();
 		}
 		
