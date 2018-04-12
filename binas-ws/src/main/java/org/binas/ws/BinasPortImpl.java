@@ -8,6 +8,7 @@ import javax.jws.WebService;
 import org.binas.domain.BinasManager;
 import org.binas.domain.User;
 import org.binas.station.ws.cli.StationClient;
+import org.binas.station.ws.cli.StationClientException;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINamingException;
@@ -132,22 +133,31 @@ public class BinasPortImpl implements BinasPortType {
 
 	@Override
 	public void rentBina(String stationId, String email) throws AlreadyHasBina_Exception, InvalidStation_Exception,
-			NoBinaAvail_Exception, NoCredit_Exception, UserNotExists_Exception, InvalidEmail_Exception {
+			NoBinaAvail_Exception, NoCredit_Exception, UserNotExists_Exception {
 		
-		StationClient s = new StationClient(this.endpointManager.getUddiUrl(), stationId);
-		org.binas.station.ws.StationView sv = s.getInfo();
-		
-		User user = null;
-		user = user.getUser(email);
-		UserView userView = user.getUserView();
-		
-		if (sv.getAvailableBinas() == 0) throw new NoBinaAvail_Exception("There is no bina available at this station.", null);
-		if (userView.getCredit() < 1) throw new NoCredit_Exception("User does not have enought credits to rent the bina,", null);
-		else {
-			s.getBina();
-			user.setHasBina(true);
-			user.removeOneCredit();
+		StationClient s;
+		try {
+			s = new StationClient(this.endpointManager.getUddiUrl(), stationId);
+			org.binas.station.ws.StationView sv = s.getInfo();
+			User user = null;
+			user = user.getUser(email);
+			UserView userView = user.getUserView();
+			
+			if (sv.getAvailableBinas() == 0) throw new NoBinaAvail_Exception("There is no bina available at this station.", null);
+			if (userView.getCredit() < 1) throw new NoCredit_Exception("User does not have enought credits to rent the bina.", null);
+			else {
+				s.getBina();
+				user.setHasBina(true);
+				user.removeOneCredit();
+			}
+		} catch (StationClientException e) {
+			System.out.println("There was an error while calling the StationClient. Check output: " + e);
+		} catch (InvalidEmail_Exception e) {
+			System.out.println("The provided email (" + e + ") is invalid.");
+		} catch (org.binas.station.ws.NoBinaAvail_Exception e) {
+			System.out.println("There is no bina available at this station.");
 		}
+		
 		
 	}
 
