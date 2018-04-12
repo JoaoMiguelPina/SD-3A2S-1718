@@ -10,6 +10,7 @@ import org.binas.domain.User;
 import org.binas.station.ws.cli.StationClient;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
+import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINamingException;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDIRecord;
 
 
@@ -49,37 +50,34 @@ public class BinasPortImpl implements BinasPortType {
 	@Override
 	public StationView getInfoStation(String stationId) throws InvalidStation_Exception {
 	
-//		
-//		UDDINaming UDDIname = this.endpointManager.getUddiNaming();
-//		String url = UDDIname.lookup(stationId);
-//		StationClient s = new StationClient(url);
-//		StationView sv = s.getInfo();
-//		
-////		Collection<String> stations = UDDIname.list("A46_%");
-//		
-////		for (String stationName : stations) {
-////			if (stationName == stationId) {
-////				StationClient s = new StationClient(stationId);
-////			}
-////		}
-////		
-//		
-//		
-//
-//		
-//		CoordinatesView coord = new CoordinatesView();
-//		coord.setX(s.getCoordinates().getX());
-//		coord.setY(s.getCoordinates().getY());
-//		
-//		sv.setAvailableBinas(s.getAvailableBinas());
-//		sv.setCapacity(s.getMaxCapacity());
-//		sv.setCoordinate(coord);
-//		sv.setFreeDocks(s.getFreeDocks());
-//		sv.setId(s.getId());
-//		sv.setTotalGets(s.getTotalGets());
-//		sv.setTotalReturns(s.getTotalReturns());
+		UDDINaming UDDIname;
+		StationClient s;
+		org.binas.station.ws.StationView svS = new org.binas.station.ws.StationView();
+		StationView svB = new StationView();
 		
-		return null;
+		try {
+			UDDIname = this.endpointManager.getUddiNaming();
+			String url = UDDIname.lookup(stationId);
+			s = new StationClient(url);
+			svS = s.getInfo();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		CoordinatesView coord = new CoordinatesView();
+		coord.setX(svS.getCoordinate().getX());
+		coord.setY(svS.getCoordinate().getY());
+		
+		svB.setAvailableBinas(svS.getAvailableBinas());
+		svB.setCapacity(svS.getCapacity());
+		svB.setCoordinate(coord);
+		svB.setFreeDocks(svS.getFreeDocks());
+		svB.setId(svS.getId());
+		svB.setTotalGets(svS.getTotalGets());
+		svB.setTotalReturns(svS.getTotalReturns());
+		
+		return svB;
 	}
 
 	@Override
@@ -123,18 +121,14 @@ public class BinasPortImpl implements BinasPortType {
 			UDDIname = this.endpointManager.getUddiNaming();
 			stations = UDDIname.listRecords("A46_Station%");
 			
-			res += "Founded " + stations.size() + "stations.\n";
+			res += "Found " + stations.size() + " stations.\n";
 			
 			for (UDDIRecord stationName : stations) {
-				System.out.println("conax");
 				System.out.println(stationName);
 			}
 			
-			
-			System.out.println("PING");
-			
 			for (UDDIRecord stationName : stations) {
-				res += "[Pinging Station" + stationName.getOrgName() + "][Awnser]";
+				res += "[Pinging Station" + stationName.getOrgName() + "][Aswser]";
 				StationClient sc = new StationClient(stationName.getUrl());
 				res += sc.testPing(inputMessage) + "\n";
 			}
@@ -168,7 +162,22 @@ public class BinasPortImpl implements BinasPortType {
 	@Override
 	public void testInitStation(String stationId, int x, int y, int capacity, int returnPrize)
 			throws BadInit_Exception {
-		// TODO Auto-generated method stub
+		
+		UDDINaming UDDIname;
+		String stationURL;
+		StationClient sc;
+		
+		try {
+			UDDIname = this.endpointManager.getUddiNaming();
+			stationURL = UDDIname.lookup(stationId);
+			sc = new StationClient(stationURL);
+			sc.testInit(x, y, capacity, returnPrize);
+			
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+		
 		
 	}
 
