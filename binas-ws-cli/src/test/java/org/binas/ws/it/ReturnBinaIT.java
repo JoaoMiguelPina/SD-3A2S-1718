@@ -26,7 +26,8 @@ public class ReturnBinaIT extends BaseIT{
 	String stationId3 = "A46_Station3";
 	
 	String userMail = "sd@tecnico.pt";
-	
+	String userMail2 = "sd3@tecnico.pt";
+	String userMail3 = "sd3@tecnico.pt";
 	@Test 
 	public void success() {
 		try {
@@ -55,14 +56,14 @@ public class ReturnBinaIT extends BaseIT{
 			StationView sv2 = client.getInfoStation(stationId2);
 			assertNotNull(sv2);
 			
-			client.activateUser(userMail);
-			client.rentBina(sv2.getId(), userMail);
+			client.activateUser(userMail2);
+			client.rentBina(sv2.getId(), userMail2);
 			
 			assertEquals(1, client.getInfoStation(sv2.getId()).getFreeDocks());
 			assertEquals(1, client.getInfoStation(sv2.getId()).getTotalGets());
 			
-			int value2 = client.getCredit(userMail);
-			client.returnBina(sv2.getId(), userMail);
+			int value2 = client.getCredit(userMail2);
+			client.returnBina(sv2.getId(), userMail2);
 			
 			assertEquals(0, client.getInfoStation(sv2.getId()).getFreeDocks());
 			assertEquals(1, client.getInfoStation(sv2.getId()).getTotalReturns());
@@ -73,14 +74,14 @@ public class ReturnBinaIT extends BaseIT{
 			StationView sv3 = client.getInfoStation(stationId3);
 			assertNotNull(sv3);
 			
-			client.activateUser(userMail);
-			client.rentBina(sv3.getId(), userMail);
+			client.activateUser(userMail3);
+			client.rentBina(sv3.getId(), userMail3);
 			
 			assertEquals(1, client.getInfoStation(sv3.getId()).getFreeDocks());
 			assertEquals(1, client.getInfoStation(sv3.getId()).getTotalGets());
 			
-			int value3 = client.getCredit(userMail);
-			client.returnBina(sv3.getId(), userMail);
+			int value3 = client.getCredit(userMail3);
+			client.returnBina(sv3.getId(), userMail3);
 			
 			assertEquals(0, client.getInfoStation(sv3.getId()).getFreeDocks());
 			assertEquals(1, client.getInfoStation(sv3.getId()).getTotalReturns());
@@ -92,26 +93,19 @@ public class ReturnBinaIT extends BaseIT{
 		}catch (UserNotExists_Exception e) {
 			System.out.println("The user: " + e + "doesnt exists.");
 		} catch (InvalidStation_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided station (" + e + ") is invalid.");
 		} catch (FullStation_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided station (" + e + ") is full.");
 		} catch (NoBinaRented_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("No bina to rent.");
 		} catch (AlreadyHasBina_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided user (" + e + ") already had rent a bina.");
 		} catch (NoBinaAvail_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided station (" + e + ") doesnt have any bina.");
 		} catch (NoCredit_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided user (" + e + ") doesnt have credit.");
 		} catch (EmailExists_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided email (" + e + ") already exists.");
 		}
 
 	}
@@ -130,29 +124,21 @@ public class ReturnBinaIT extends BaseIT{
 			client.rentBina(sv1.getId(), userMail);
 			client.rentBina(sv1.getId(), "pedro@tecnico");
 		} catch (BadInit_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("There was an error while creating station. Check output: " + e);
 		} catch (InvalidStation_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided station (" + e + ") is invalid.");
 		} catch (EmailExists_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided email (" + e + ") already exists.");
 		} catch (InvalidEmail_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided email (" + e + ") is invalid.");
 		} catch (AlreadyHasBina_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided user (" + e + ") already had rent a bina.");
 		} catch (NoBinaAvail_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided station (" + e + ") doesnt have any bina.");
 		} catch (NoCredit_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided user (" + e + ") doesnt have credit.");
 		} catch (UserNotExists_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The user: " + e + "doesnt exists.");
 		}
 		
 	}
@@ -162,14 +148,30 @@ public class ReturnBinaIT extends BaseIT{
 		try {
 			client.testInitStation("CXX_Station1", 10, 10, 1, 2);
 		} catch (BadInit_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("There was an error while creating station. Check output: " + e);
+		}
+	}
+	
+	@Test(expected=InvalidStation_Exception.class)
+	public void InvalidStationExceptionEmptyStation() {
+		try {
+			client.testInitStation("", 10, 10, 1, 2);
+		} catch (BadInit_Exception e) {
+			System.out.println("There was an error while creating station. Check output: " + e);
+		}
+	}
+	
+	@Test(expected=InvalidStation_Exception.class)
+	public void InvalidStationExceptionNullStation() {
+		try {
+			client.testInitStation(null, 10, 10, 1, 2);
+		} catch (BadInit_Exception e) {
+			System.out.println("There was an error while creating station. Check output: " + e);
 		}
 	}
 	
 	@Test(expected=NoBinaRented_Exception.class)
 	public void NoBinaRentedException() {
-		//STATION 1
 		int bonus1 = 1;
 		try {
 			client.testInitStation(stationId1, 10, 10, 5, bonus1);
@@ -181,26 +183,19 @@ public class ReturnBinaIT extends BaseIT{
 			int value1 = client.getCredit(userMail);
 			client.returnBina(sv1.getId(), userMail);
 		} catch (BadInit_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("There was an error while creating station. Check output: " + e);
 		} catch (InvalidStation_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided station (" + e + ") is invalid.");
 		} catch (EmailExists_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided email (" + e + ") already exists.");
 		} catch (InvalidEmail_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided email (" + e + ") is invalid.");
 		} catch (UserNotExists_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The user: " + e + "doesnt exists.");
 		} catch (FullStation_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided station (" + e + ") is full.");
 		} catch (NoBinaRented_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("No bina to rent.");
 		}
 		
 
@@ -216,23 +211,17 @@ public class ReturnBinaIT extends BaseIT{
 			
 			client.rentBina(sv1.getId(), userMail);
 		} catch (BadInit_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("There was an error while creating station. Check output: " + e);
 		} catch (InvalidStation_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided station (" + e + ") is invalid.");
 		} catch (AlreadyHasBina_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided user (" + e + ") already had rent a bina.");
 		} catch (NoBinaAvail_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided station (" + e + ") doesnt have any bina.");
 		} catch (NoCredit_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The provided user (" + e + ") doesnt have credit.");
 		} catch (UserNotExists_Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("The user: " + e + "doesnt exists.");
 		}
 		
 		
