@@ -55,10 +55,9 @@ public class BinasPortImpl implements BinasPortType {
 		try {
 			UDDIname = this.endpointManager.getUddiNaming();
 			stations = UDDIname.list("A46_Station%");
-			stationsString = (String[]) stations.toArray();
-			closest = new StationClient(stationsString[0]);
-						
 			for(int i = 0; i < numberOfStations; i++) {
+				stationsString = (String[]) stations.toArray();
+				closest = new StationClient(stationsString[0]);
 				for(String station : stations) {
 					s = new StationClient(station);	
 					if((Math.pow(s.getInfo().getCoordinate().getX(), 2) + Math.pow(s.getInfo().getCoordinate().getY(), 2)) < (Math.pow(closest.getInfo().getCoordinate().getX(), 2) + Math.pow(closest.getInfo().getCoordinate().getY(), 2)) ){
@@ -148,7 +147,7 @@ public class BinasPortImpl implements BinasPortType {
 		user = user.getUser(email);
 		UserView uv = user.getUserView();
 		
-		if (user.hasBina()) {
+		if (user.doesHaveBina()) {
 			if (sv.getFreeDocks() == 0) {
 				throw new FullStation_Exception("This station is full", null);
 			}
