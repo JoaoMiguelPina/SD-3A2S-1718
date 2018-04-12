@@ -42,8 +42,37 @@ public class BinasPortImpl implements BinasPortType {
 
 	@Override
 	public List<StationView> listStations(Integer numberOfStations, CoordinatesView coordinates) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		UDDINaming UDDIname;
+		StationClient s;
+		StationClient closest;
+		Collection<String> stations;
+		Collection<StationClient> ordered = null;
+		List<StationView> result = null;
+		String[] stationsString;
+		
+		try {
+			UDDIname = this.endpointManager.getUddiNaming();
+			stations = UDDIname.list("A46_Station%");
+			stationsString = (String[]) stations.toArray();
+			closest = new StationClient(stationsString[0]);
+						
+			for(int i = 0; i < numberOfStations; i++) {
+				for(String station : stations) {
+					s = new StationClient(station);	
+					if((Math.pow(s.getInfo().getCoordinate().getX(), 2) + Math.pow(s.getInfo().getCoordinate().getY(), 2)) < (Math.pow(closest.getInfo().getCoordinate().getX(), 2) + Math.pow(closest.getInfo().getCoordinate().getY(), 2)) ){
+						closest = s;
+					}		
+				}
+				stations.remove(closest.getWsURL());
+				result.add(this.getInfoStation(closest.getWsName()));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 
 	@Override
