@@ -126,14 +126,12 @@ public class BinasPortImpl implements BinasPortType {
 
 	@Override
 	public int getCredit(String email) throws UserNotExists_Exception {
-		User user = null;
+		User user;
 		int credit = 0;
-		try {
-			user = user.getUser(email);
-			credit = user.getCredit();
-		} catch (InvalidEmail_Exception e) {
-			System.out.printf("Email syntax (" + e + ") not valid.");
-		}
+		user = User.getUser(email);
+		System.out.println("ESTOU NO BINASIMPL: " + user.getEmail());
+		credit = user.getCredit();
+		
 		return credit;
 	}
 
@@ -149,11 +147,12 @@ public class BinasPortImpl implements BinasPortType {
 			NoBinaAvail_Exception, NoCredit_Exception, UserNotExists_Exception {
 		
 		StationClient s;
+		User user;
 		try {
 			s = new StationClient(this.endpointManager.getUddiUrl(), stationId);
 			org.binas.station.ws.StationView sv = s.getInfo();
-			User user = null;
-			user = user.getUser(email);
+			
+			user = User.getUser(email);
 			UserView userView = user.getUserView();
 			
 			if (sv.getAvailableBinas() == 0) throw new NoBinaAvail_Exception("There is no bina available at this station.", null);
@@ -165,13 +164,9 @@ public class BinasPortImpl implements BinasPortType {
 			}
 		} catch (StationClientException e) {
 			System.out.println("There was an error while calling the StationClient. Check output: " + e);
-		} catch (InvalidEmail_Exception e) {
-			System.out.println("The provided email (" + e + ") is invalid.");
 		} catch (org.binas.station.ws.NoBinaAvail_Exception e) {
 			System.out.println("There is no bina available at this station.");
-		}
-		
-		
+		} 
 	}
 
 	@Override
@@ -179,13 +174,15 @@ public class BinasPortImpl implements BinasPortType {
 			throws FullStation_Exception, InvalidStation_Exception, NoBinaRented_Exception, UserNotExists_Exception {
 		
 		StationClient s;
+		User user;
 		try {
 			s = new StationClient(this.endpointManager.getUddiUrl(), stationId);
 			org.binas.station.ws.StationView sv = s.getInfo();
 			
-			User user = null;
-			user = user.getUser(email);
-			UserView uv = user.getUserView();
+			
+			user = User.getUser(email);
+			UserView userView = user.getUserView();
+		
 			
 			if (user.doesHaveBina()) {
 				if (sv.getFreeDocks() == 0) {
@@ -199,11 +196,9 @@ public class BinasPortImpl implements BinasPortType {
 			}
 		} catch (StationClientException e) {
 			System.out.println("There was an error while calling the StationClient. Check output: " + e);
-		} catch (InvalidEmail_Exception e) {
-			System.out.println("The provided email (" + e + ") is invalid.");
 		} catch (NoSlotAvail_Exception e) {
 			System.out.println("There is no slot available at this station.");
-		}
+		} 
 		
 		throw new NoBinaRented_Exception(email, null);
 		
