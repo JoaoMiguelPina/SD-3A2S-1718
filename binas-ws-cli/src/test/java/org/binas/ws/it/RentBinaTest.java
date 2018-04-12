@@ -22,7 +22,7 @@ public class RentBinaTest {
 //	BinasClient
 	protected static BinasClient client;
 	
-	
+	/*
 	@Before
 	public void setup() {
 		testProps = new Properties();
@@ -53,7 +53,7 @@ public class RentBinaTest {
 	}
 	
 	@Test
-	public void success{
+	public void success(){
 		
 	}
 	
@@ -70,5 +70,5 @@ public class RentBinaTest {
 	public void NoCreditException() {}
 	
 	@Test(expected = UserNotExists_Exception.class)
-	public void UserNotExistsException() {}
+	public void UserNotExistsException() {}*/
 }
