@@ -6,6 +6,7 @@ import java.util.List;
 import javax.jws.WebService;
 
 import org.binas.domain.BinasManager;
+import org.binas.domain.User;
 import org.binas.station.ws.cli.StationClient;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
@@ -116,8 +117,10 @@ public class BinasPortImpl implements BinasPortType {
 
 	@Override
 	public UserView activateUser(String email) throws EmailExists_Exception, InvalidEmail_Exception {
-		// TODO Auto-generated method stub
-		return null;
+		User user = null;
+		user.getUser(email);
+		UserView userView = user.getUserView();
+		return userView;
 	}
 
 	@Override
