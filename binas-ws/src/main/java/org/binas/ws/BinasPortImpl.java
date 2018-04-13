@@ -154,9 +154,10 @@ public class BinasPortImpl implements BinasPortType {
 			
 			user = User.getUser(email);
 			
-			if (sv.getAvailableBinas() == 0) throw new NoBinaAvail_Exception("There is no bina available at this station.", null);
-			if (user.getCredit() < 1) throw new NoCredit_Exception("User does not have enought credits to rent the bina.", null);
 			if (user.doesHaveBina()) throw new AlreadyHasBina_Exception("User has already rented a bina.", null);
+			if (sv.getAvailableBinas() == 0) throw new NoBinaAvail_Exception("There is no bina available at this station.", null);
+			if (user.getCredit() <= 0) throw new NoCredit_Exception("User does not have enought credits to rent the bina.", null);
+			
 			else {
 				s.getBina();
 				user.setHasBina(true);
@@ -287,8 +288,7 @@ public class BinasPortImpl implements BinasPortType {
 
 	@Override
 	public void testInit(int userInitialPoints) throws BadInit_Exception {
-		// TODO Auto-generated method stub
-		
+		User.setDef(userInitialPoints);
 	}
 	
 

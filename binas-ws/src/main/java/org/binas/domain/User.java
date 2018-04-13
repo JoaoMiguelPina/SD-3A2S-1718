@@ -2,6 +2,7 @@ package org.binas.domain;
 
 import java.util.HashMap;
 
+import org.binas.ws.BadInit_Exception;
 import org.binas.ws.EmailExists_Exception;
 import org.binas.ws.InvalidEmail_Exception;
 import org.binas.ws.UserNotExists_Exception;
@@ -12,6 +13,7 @@ public class User {
 	private String email;
 	private boolean hasBina;
 	private int credit;
+	private static int def = 10;
 	
 	private static HashMap<String, User> users = new HashMap<String, User>();
 	
@@ -19,7 +21,7 @@ public class User {
 		checkEmail(email);
 		this.email = email;
 		this.hasBina = false;
-		this.credit = 10;
+		this.credit = def;
 		addUser(this);
 	}
 	
@@ -95,6 +97,11 @@ public class User {
 	
 	public static void clear() {
 		users.clear();
+	}
+	
+	public static void setDef(int d) throws BadInit_Exception {
+		if (d < 0) throw new BadInit_Exception("lol", null);
+		User.def = d;
 	}
 	
 }
