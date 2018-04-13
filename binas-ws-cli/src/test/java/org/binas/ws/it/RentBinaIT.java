@@ -29,9 +29,9 @@ public class RentBinaIT extends BaseIT{
 	String stationId2 = "A46_Station2";
 	String stationId3 = "A46_Station3";
 	
-	String userMail = "sd.rent@tecnico.pt";
-	String userMail2 = "sd2.rent@tecnico.pt";
-	String userMail3 = "sd3.rent@tecnico.pt";
+	String userMail = "binas@tecnico";
+	String userMail2 = "gira@binas";
+	String userMail3 = "drivenow@istoeumacopia";
 	
 	int valor;
 	
@@ -61,15 +61,15 @@ public class RentBinaIT extends BaseIT{
 			assertEquals(1, client.getInfoStation(stationId2).getFreeDocks());
 			assertEquals(9, client.getCredit(userMail2));
 			
-			//STATION 3
-			int bonus3 = 1;
-			client.activateUser(userMail3);
-			client.testInitStation(stationId3, 10, 10, 216, bonus3);
-			client.rentBina(stationId3, userMail3);
-			
-			assertEquals(215, client.getInfoStation(stationId3).getAvailableBinas());
-			assertEquals(1, client.getInfoStation(stationId3).getFreeDocks());
-			assertEquals(9, client.getCredit(userMail3));
+//			//STATION 3
+//			int bonus3 = 1;
+//			client.activateUser(userMail3);
+//			client.testInitStation(stationId3, 10, 10, 216, bonus3);
+//			client.rentBina(stationId3, userMail3);
+//			
+//			assertEquals(215, client.getInfoStation(stationId3).getAvailableBinas());
+//			assertEquals(1, client.getInfoStation(stationId3).getFreeDocks());
+//			assertEquals(9, client.getCredit(userMail3));
 			
 		
 		}catch(BadInit_Exception e) {
@@ -92,33 +92,34 @@ public class RentBinaIT extends BaseIT{
 
 	}
 	
-//	@Test//(expected = AlreadyHasBina_Exception.class)
-//	public void AlreadyHasBinaException() {
-//		
-//		int bonus1 = 1;
-//		try {
-//			client.testInitStation(stationId1, 10, 10, 5, bonus1);
-//			client.activateUser(userMail);
-//			client.rentBina(stationId1, userMail);
-//			client.rentBina(stationId1, userMail);
-//		} catch (BadInit_Exception e) {
-//			System.out.println("There was an error while creating station. Check output: " + e);
-//		} catch (EmailExists_Exception e) {
-//			System.out.println("The provided email (" + e + ") already exists.");
-//		} catch (InvalidEmail_Exception e) {
-//			System.out.println("The provided email (" + e + ") is invalid.");
-//		} catch (InvalidStation_Exception e) {
-//			System.out.println("The provided station (" + e + ") is invalid.");
-//		} catch (AlreadyHasBina_Exception e) {
-//			System.out.println("The provided user (" + e + ") already had rent a bina.");
-//		} catch (NoBinaAvail_Exception e) {
-//			System.out.println("The provided station (" + e + ") doesnt have any bina.");
-//		} catch (NoCredit_Exception e) {
-//			System.out.println("The provided user (" + e + ") doesnt have credit.");
-//		} catch (UserNotExists_Exception e) {
-//			System.out.println("The user: " + e + "doesnt exists.");
-//		}	
-//	}
+	@Test(expected = AlreadyHasBina_Exception.class)
+	public void AlreadyHasBinaException() {
+		
+		int bonus1 = 1;
+		try {
+			client.testInitStation(stationId1, 10, 10, 5, bonus1);
+			client.activateUser(userMail);
+			client.rentBina(stationId1, userMail);
+			client.rentBina(stationId1, userMail);
+			
+		} catch (BadInit_Exception e) {
+			System.out.println("There was an error while creating station. Check output: " + e);
+		} catch (EmailExists_Exception e) {
+			System.out.println("The provided email (" + e + ") already exists.");
+		} catch (InvalidEmail_Exception e) {
+			System.out.println("The provided email (" + e + ") is invalid.");
+		} catch (InvalidStation_Exception e) {
+			System.out.println("The provided station (" + e + ") is invalid.");
+		} catch (AlreadyHasBina_Exception e) {
+			System.out.println("The provided user (" + e + ") already had rent a bina.");
+		} catch (NoBinaAvail_Exception e) {
+			System.out.println("The provided station (" + e + ") doesnt have any bina.");
+		} catch (NoCredit_Exception e) {
+			System.out.println("The provided user (" + e + ") doesnt have credit.");
+		} catch (UserNotExists_Exception e) {
+			System.out.println("The user: " + e + "doesnt exists.");
+		}	
+	}
 //	
 //	@Test//(expected = InvalidEmail_Exception.class)
 //	public void InvalidEmailException() {

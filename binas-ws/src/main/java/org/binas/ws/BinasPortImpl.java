@@ -153,10 +153,10 @@ public class BinasPortImpl implements BinasPortType {
 			org.binas.station.ws.StationView sv = s.getInfo();
 			
 			user = User.getUser(email);
-			UserView userView = user.getUserView();
 			
 			if (sv.getAvailableBinas() == 0) throw new NoBinaAvail_Exception("There is no bina available at this station.", null);
-			if (userView.getCredit() < 1) throw new NoCredit_Exception("User does not have enought credits to rent the bina.", null);
+			if (user.getCredit() < 1) throw new NoCredit_Exception("User does not have enought credits to rent the bina.", null);
+			if (user.doesHaveBina()) throw new AlreadyHasBina_Exception("User has already rented a bina.", null);
 			else {
 				s.getBina();
 				user.setHasBina(true);
@@ -240,12 +240,17 @@ public class BinasPortImpl implements BinasPortType {
 	public void testClear() {
 		try {
 			User.clear();
+			
+			
 			UDDINaming UDDIname = this.endpointManager.getUddiNaming();
 			Collection<UDDIRecord> stations = UDDIname.listRecords("A46_Station%");
 			StationClient sc;
 			for (UDDIRecord stationName : stations) {
 				sc = new StationClient(stationName.getUrl());
+				
+				sc.setWsName(stationName.getOrgName());
 				sc.testClear();
+				
 			}
 			
 		

@@ -146,4 +146,9 @@ public class StationClient implements StationPortType {
 	port.testInit(x, y, capacity, returnPrize);
 	 }
 
+	public void setWsName(String orgName) {
+		this.wsName = orgName;
+		
+	}
+
 }
