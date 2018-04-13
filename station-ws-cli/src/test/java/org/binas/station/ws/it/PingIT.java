@@ -14,14 +14,4 @@ public class PingIT extends BaseIT {
 	    public void success() {
 			 assertNotNull(client.testPing("Um teste de ping!"));
 	    }
-	    
-	    @Test
-	    public void pingNullTest() {
-			 assertNull(client.testPing(null));
-	    }
-	    
-	    @Test
-	    public void pingEmptyTest() {
-			 assertNull(client.testPing(""));
-	    }
 }
