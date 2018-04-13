@@ -7,6 +7,7 @@ import org.binas.ws.InvalidEmail_Exception;
 import org.binas.ws.InvalidStation_Exception;
 import org.binas.ws.StationView;
 import org.binas.ws.UserNotExists_Exception;
+import org.junit.After;
 import org.junit.Test;
 
 public class GetCreditIT extends BaseIT{
@@ -147,6 +148,11 @@ public class GetCreditIT extends BaseIT{
 		} catch (EmailExists_Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@After
+	public void tearDown() {
+		client.testClear();
 	}
 	
 }
