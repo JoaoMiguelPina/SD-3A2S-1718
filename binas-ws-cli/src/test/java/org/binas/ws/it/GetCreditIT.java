@@ -23,7 +23,7 @@ public class GetCreditIT extends BaseIT{
 		
 		int credit = client.getCredit("miguel.regouga@gmail.com");
 		
-		assertEquals(10, 10);
+		assertEquals(10, credit);
 	}
 	
 	@Test(expected = InvalidEmail_Exception.class)

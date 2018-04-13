@@ -239,13 +239,15 @@ public class BinasPortImpl implements BinasPortType {
 	@Override
 	public void testClear() {
 		try {
+			User.clear();
 			UDDINaming UDDIname = this.endpointManager.getUddiNaming();
-			Collection<UDDIRecord> stations = UDDIname.listRecords("A46_%");
+			Collection<UDDIRecord> stations = UDDIname.listRecords("A46_Station%");
 			StationClient sc;
 			for (UDDIRecord stationName : stations) {
 				sc = new StationClient(stationName.getUrl());
 				sc.testClear();
 			}
+			
 		
 		}
 		catch (Exception e){
@@ -258,21 +260,15 @@ public class BinasPortImpl implements BinasPortType {
 	public void testInitStation(String stationId, int x, int y, int capacity, int returnPrize)
 			throws BadInit_Exception {
 		
-		UDDINaming UDDIname;
-		String stationURL;
+		String UDDIname;
 		StationClient sc;
 		
 		try {
-			UDDIname = this.endpointManager.getUddiNaming();
-			stationURL = UDDIname.lookup(stationId);
-			sc = new StationClient(stationURL);
+			UDDIname = this.endpointManager.getUddiUrl();
+			sc = new StationClient(UDDIname, stationId);
 			sc.testInit(x, y, capacity, returnPrize);
 			
-		}catch (UDDINamingException e) {
-			System.out.println("There was an error while calling UDDINaming at testInitStation(). Check output: ");
-			e.printStackTrace();
-		}
-		catch (StationClientException e) {
+		}catch (StationClientException e) {
 			System.out.println("There was an error while calling the StationClient at testInitStation(). Check output: ");
 			e.printStackTrace();
 		}

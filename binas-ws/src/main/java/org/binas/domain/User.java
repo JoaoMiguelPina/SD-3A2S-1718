@@ -93,4 +93,8 @@ public class User {
 		return userView;
 	}
 	
+	public static void clear() {
+		users.clear();
+	}
+	
 }
