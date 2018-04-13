@@ -89,20 +89,34 @@ public class BinasPortImpl implements BinasPortType {
 	@Override
 	public StationView getInfoStation(String stationId) throws InvalidStation_Exception {
 		
-		if (stationId == null || stationId == "") throw new InvalidStation_Exception(stationId, null);
+		System.out.println("Station id:" + stationId);
 		
-	
-		String UDDIname;
+		if (stationId == null || stationId == "" || !stationId.startsWith("A46_Station")) throw new InvalidStation_Exception(stationId, null);
+		
+		
+		UDDINaming UDDIname;
 		StationClient s;
 		org.binas.station.ws.StationView svS = new org.binas.station.ws.StationView();
 		StationView svB = new StationView();
-		
+	
 		
 		try {
-			UDDIname = this.endpointManager.getUddiUrl();
-			s = new StationClient(UDDIname, stationId);
+			
+			UDDIname = this.endpointManager.getUddiNaming();
+			String url = UDDIname.lookup(stationId);
+			s = new StationClient(url);
 			svS = s.getInfo();
 			
+			System.out.println("Station id:" + svS.getId());
+			
+		} catch (StationClientException e) {
+			throw new InvalidStation_Exception(stationId, null);
+		} catch (UDDINamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+
 			CoordinatesView coord = new CoordinatesView();
 			coord.setX(svS.getCoordinate().getX());
 			coord.setY(svS.getCoordinate().getY());
@@ -117,9 +131,7 @@ public class BinasPortImpl implements BinasPortType {
 			
 			return svB;
 			
-		} catch (StationClientException e) {
-			throw new InvalidStation_Exception(stationId, null);
-		}
+		
 		
 	}
 
