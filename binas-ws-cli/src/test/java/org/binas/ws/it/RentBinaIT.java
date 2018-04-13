@@ -39,16 +39,15 @@ public class RentBinaIT extends BaseIT{
 	@Test
 	public void success() throws EmailExists_Exception, InvalidEmail_Exception, AlreadyHasBina_Exception, InvalidStation_Exception, NoBinaAvail_Exception, NoCredit_Exception, UserNotExists_Exception, BadInit_Exception {
 			
-			int bonus1 = 1;
 			client.activateUser(userMail);
-			client.testInitStation(stationId1, 10, 10, 2, bonus1);
+			client.testInitStation(stationId1, 22, 7, 6, 2);
 			client.rentBina(stationId1, userMail);
 	
 			
 			StationView sv = client.getInfoStation(stationId1);
 			
 			
-			assertEquals(1, sv.getAvailableBinas());
+			assertEquals(5, sv.getAvailableBinas());
 			assertEquals(1, sv.getFreeDocks());
 			assertEquals(9, client.getCredit(userMail));
 
@@ -57,9 +56,8 @@ public class RentBinaIT extends BaseIT{
 	@Test(expected = AlreadyHasBina_Exception.class)
 	public void AlreadyHasBinaException() throws BadInit_Exception, EmailExists_Exception, InvalidEmail_Exception, AlreadyHasBina_Exception, InvalidStation_Exception, NoBinaAvail_Exception, NoCredit_Exception, UserNotExists_Exception {
 		
-		int bonus1 = 1;
 
-			client.testInitStation(stationId1, 10, 10, 5, bonus1);
+			client.testInitStation(stationId1, 22, 7, 6, 2);
 			client.activateUser(userMail);
 			client.rentBina(stationId1, userMail);
 			client.rentBina(stationId1, userMail);
@@ -70,7 +68,7 @@ public class RentBinaIT extends BaseIT{
 	@Test (expected = InvalidEmail_Exception.class)
 	public void InvalidEmailException() throws BadInit_Exception, EmailExists_Exception, InvalidEmail_Exception {
 		
-		client.testInitStation(stationId1, 10, 10, 5, 1);
+		client.testInitStation(stationId1, 22, 7, 6, 2);
 		client.activateUser("mail_invalido");
 
 	}
@@ -78,7 +76,7 @@ public class RentBinaIT extends BaseIT{
 	@Test(expected = EmailExists_Exception.class)
 	public void EmailExistsException() throws BadInit_Exception, EmailExists_Exception, InvalidEmail_Exception {
 		
-		client.testInitStation(stationId1, 10, 10, 5, 1);
+		client.testInitStation(stationId1, 22, 7, 6, 2);
 		client.activateUser(userMail);
 		client.activateUser(userMail);
 
@@ -94,7 +92,7 @@ public class RentBinaIT extends BaseIT{
 	
 	@Test(expected = NoBinaAvail_Exception.class)
 	public void NoBinaAvailableException() throws BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, InvalidEmail_Exception, AlreadyHasBina_Exception, NoBinaAvail_Exception, NoCredit_Exception, UserNotExists_Exception {
-			client.testInitStation(stationId1, 10, 10, 0, 1);
+			client.testInitStation(stationId1, 22, 7, 0, 2);
 			client.activateUser(userMail);
 			client.rentBina(stationId1, userMail);
 		
@@ -102,7 +100,7 @@ public class RentBinaIT extends BaseIT{
 	
 	@Test(expected = NoCredit_Exception.class)
 	public void NoCreditException() throws BadInit_Exception, EmailExists_Exception, InvalidEmail_Exception, AlreadyHasBina_Exception, InvalidStation_Exception, NoBinaAvail_Exception, NoCredit_Exception, UserNotExists_Exception {
-		client.testInitStation(stationId1, 10, 10, 5, 2);
+		client.testInitStation(stationId1, 22, 7, 6, 2);
 		client.testInit(0);
 		client.activateUser(userMail2);
 		client.rentBina(stationId1, userMail2);

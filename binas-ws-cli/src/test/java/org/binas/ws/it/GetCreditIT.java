@@ -17,7 +17,7 @@ public class GetCreditIT extends BaseIT{
 	public void success() throws BadInit_Exception, InvalidStation_Exception, InvalidEmail_Exception, 
 	EmailExists_Exception, UserNotExists_Exception {
 		
-		client.testInitStation("A46_Station1", 50, 60, 100, 2);
+		client.testInitStation("A46_Station1", 22, 7, 6, 2);
 		StationView station = client.getInfoStation("A46_Station1");
 		assertNotNull(station);
 		client.activateUser("miguel.regouga@gmail.com");
@@ -29,7 +29,7 @@ public class GetCreditIT extends BaseIT{
 	
 	@Test(expected = UserNotExists_Exception.class)
 	public void emailDoesNotExist() throws InvalidEmail_Exception, BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, UserNotExists_Exception{
-		client.testInitStation("A46_Station1", 50, 60, 100, 2);
+		client.testInitStation("A46_Station1", 22, 7, 6, 2);
 		StationView station = client.getInfoStation("A46_Station1");
 		assertNotNull(station);
 		client.activateUser("miguel.regouga@gmail.com");
@@ -40,7 +40,7 @@ public class GetCreditIT extends BaseIT{
 	
 	@Test(expected = UserNotExists_Exception.class)
 	public void nullEmail() throws InvalidEmail_Exception, BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, UserNotExists_Exception{
-		client.testInitStation("A46_Station1", 50, 60, 100, 2);
+		client.testInitStation("A46_Station1", 22, 7, 6, 2);
 		StationView station = client.getInfoStation("A46_Station1");
 		assertNotNull(station);
 		client.activateUser("miguel.regouga@gmail.com");
@@ -51,17 +51,17 @@ public class GetCreditIT extends BaseIT{
 	
 	@Test(expected = UserNotExists_Exception.class)
 	public void userNotActivated() throws InvalidEmail_Exception, BadInit_Exception, InvalidStation_Exception, UserNotExists_Exception{
-		client.testInitStation("A46_Station1", 50, 60, 100, 2);
+		client.testInitStation("A46_Station1", 22, 7, 6, 2);
 		StationView station = client.getInfoStation("A46_Station1");
 		assertNotNull(station);
-		int credit = client.getCredit("pedro.caldeira@gmail.com");
+		int credit = client.getCredit("joao.pina@gmail.com");
 		assertEquals(10, credit);
 			
 	}
 	
 	@Test(expected = UserNotExists_Exception.class)
 	public void emptyEmail() throws InvalidEmail_Exception, BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, UserNotExists_Exception{
-		client.testInitStation("A46_Station1", 50, 60, 100, 2);
+		client.testInitStation("A46_Station1", 22, 7, 6, 2);
 		StationView station = client.getInfoStation("A46_Station1");
 		assertNotNull(station);
 		client.activateUser("miguel.regouga@gmail.com");
@@ -72,7 +72,7 @@ public class GetCreditIT extends BaseIT{
 	
 	@Test(expected = UserNotExists_Exception.class)
 	public void spaceEmail() throws InvalidEmail_Exception, BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, UserNotExists_Exception{
-		client.testInitStation("A46_Station1", 50, 60, 100, 2);
+		client.testInitStation("A46_Station1", 22, 7, 6, 2);
 		StationView station = client.getInfoStation("A46_Station1");
 		assertNotNull(station);
 		client.activateUser("miguel.regouga@gmail.com");

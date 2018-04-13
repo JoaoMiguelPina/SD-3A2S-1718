@@ -37,7 +37,7 @@ public class User {
 		return email;
 	}
 	
-	public boolean doesHaveBina() {
+	public boolean isHasBina() {
 		return hasBina;
 	}
 	
@@ -90,7 +90,8 @@ public class User {
 	public UserView getUserView() {
 		UserView userView = new UserView();
 		userView.setEmail(this.getEmail());
-		userView.setHasBina(this.doesHaveBina());
+		userView.setHasBina(this.isHasBina());
+		System.out.println("User has bina? getUserView " + this.isHasBina());
 		userView.setCredit(this.getCredit());
 		return userView;
 	}

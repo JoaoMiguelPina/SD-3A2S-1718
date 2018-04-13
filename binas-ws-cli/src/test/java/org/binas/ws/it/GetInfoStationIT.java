@@ -16,13 +16,13 @@ public class GetInfoStationIT extends BaseIT{
 	public void success() {
 		
 		try {
-			client.testInitStation("A46_Station1", 50, 60, 100, 2);
+			client.testInitStation("A46_Station1", 22, 7, 6, 2);
 			station = client.getInfoStation("A46_Station1");
 			
-			assertEquals(50, (int) station.getCoordinate().getX());
-			assertEquals(60, (int) station.getCoordinate().getY());
-			assertEquals(100, station.getCapacity());
-			assertEquals(100, station.getAvailableBinas());
+			assertEquals(22, (int) station.getCoordinate().getX());
+			assertEquals(7, (int) station.getCoordinate().getY());
+			assertEquals(6, station.getCapacity());
+			assertEquals(6, station.getAvailableBinas());
 			assertEquals(0, station.getFreeDocks());
 			assertEquals(0, station.getTotalGets());
 			assertEquals(0, station.getTotalReturns());

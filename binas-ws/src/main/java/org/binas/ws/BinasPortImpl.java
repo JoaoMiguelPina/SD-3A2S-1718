@@ -130,8 +130,6 @@ public class BinasPortImpl implements BinasPortType {
 			svB.setTotalReturns(svS.getTotalReturns());
 			
 			return svB;
-			
-		
 		
 	}
 
@@ -160,12 +158,11 @@ public class BinasPortImpl implements BinasPortType {
 		StationClient s;
 		User user;
 		try {
+			user = User.getUser(email);
 			s = new StationClient(this.endpointManager.getUddiUrl(), stationId);
 			org.binas.station.ws.StationView sv = s.getInfo();
 			
-			user = User.getUser(email);
-			
-			if (user.doesHaveBina()) throw new AlreadyHasBina_Exception("User has already rented a bina.", null);
+			if (user.isHasBina()) throw new AlreadyHasBina_Exception("User has already rented a bina.", null);
 			if (sv.getAvailableBinas() == 0) throw new NoBinaAvail_Exception("There is no bina available at this station.", null);
 			if (user.getCredit() <= 0) throw new NoCredit_Exception("User does not have enought credits to rent the bina.", null);
 			
@@ -185,6 +182,8 @@ public class BinasPortImpl implements BinasPortType {
 	public void returnBina(String stationId, String email)
 			throws FullStation_Exception, InvalidStation_Exception, NoBinaRented_Exception, UserNotExists_Exception {
 		
+		if (stationId == null || stationId.trim().equals("") || !stationId.startsWith("A46_Station")) throw new InvalidStation_Exception(email, null);
+		
 		StationClient s;
 		User user;
 		try {
@@ -196,7 +195,7 @@ public class BinasPortImpl implements BinasPortType {
 			UserView userView = user.getUserView();
 		
 			
-			if (user.doesHaveBina()) {
+			if (user.isHasBina()) {
 				if (sv.getFreeDocks() == 0) {
 					throw new FullStation_Exception("This station is full", null);
 				}
@@ -206,13 +205,15 @@ public class BinasPortImpl implements BinasPortType {
 					user.addCredit(bonus);
 				}
 			}
+			else throw new NoBinaRented_Exception(email, null);
+			
 		} catch (StationClientException e) {
 			System.out.println("There was an error while calling the StationClient. Check output: " + e);
 		} catch (NoSlotAvail_Exception e) {
 			System.out.println("There is no slot available at this station.");
 		} 
 		
-		throw new NoBinaRented_Exception(email, null);
+		
 		
 		
 		
@@ -288,7 +289,9 @@ public class BinasPortImpl implements BinasPortType {
 		
 		try {
 			UDDIname = this.endpointManager.getUddiUrl();
+			System.out.println("Station id no testInitStation antes: " + stationId);
 			sc = new StationClient(UDDIname, stationId);
+			System.out.println("Station id no testInitStation depois: " + sc.getInfo().getId());
 			sc.testInit(x, y, capacity, returnPrize);
 			
 		}catch (StationClientException e) {

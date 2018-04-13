@@ -76,22 +76,18 @@ public class StationClient implements StationPortType {
 
 	/** UDDI lookup */
 	private void uddiLookup() throws StationClientException {
-		
-			UDDINaming uddi = null;
-			try {
-				uddi = new UDDINaming(this.uddiURL);
-			} catch (UDDINamingException e1) {
-				throw new StationClientException();
+		try {
+			UDDINaming uddi = new UDDINaming(this.uddiURL);
+			this.wsURL = uddi.lookup(this.wsName);
+			if (this.wsURL == null) {
+				throw new StationClientException("Error");
 			}
-			try {
-				this.wsURL = uddi.lookup(this.wsName);
-			} catch (UDDINamingException e) {
-				throw new StationClientException();
-			}
-
+		}
+		catch (UDDINamingException e) {
+			throw new StationClientException("Error", e);
+		}
 	}
-
-
+	
 	/** Stub creation and configuration */
 	private void createStub() {
 		 if (verbose)
