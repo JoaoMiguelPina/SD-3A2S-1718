@@ -38,7 +38,7 @@ public class GetInfoMethodTest extends BaseIT {
 			
 			
 		} catch (BadInit_Exception e) {
-			// TODO Auto-generated catch block
+			System.out.println("There was an init error. Check output: ");
 			e.printStackTrace();
 		}
 	}
@@ -69,7 +69,7 @@ public class GetInfoMethodTest extends BaseIT {
 			
 			
 		} catch (BadInit_Exception e) {
-			// TODO Auto-generated catch block
+			System.out.println("There was an init error. Check output: ");
 			e.printStackTrace();
 		}
 	}

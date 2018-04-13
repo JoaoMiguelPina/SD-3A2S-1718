@@ -132,7 +132,7 @@ public class StationEndpointManager {
 			try {
 				this.uddiNaming.unbind(this.wsName);
 			} catch (UDDINamingException e) {
-				// TODO Auto-generated catch block
+				System.out.println("There was an error while calling UDDINaming at listStations(). Check output: ");
 				e.printStackTrace();
 			}
 			System.out.printf("Deleted '%s' from UDDI%n", wsName);

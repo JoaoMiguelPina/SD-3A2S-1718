@@ -71,13 +71,13 @@ public class BinasClient implements BinasPortType {
 		try {
 			uddi = new UDDINaming(this.uddiURL);
 		} catch (UDDINamingException e1) {
-			// TODO Auto-generated catch block
+			System.out.println("There was an error while calling UDDINaming at listStations(). Check output: ");
 			e1.printStackTrace();
 		}
 		try {
 			this.wsURL = uddi.lookup(this.wsName);
 		} catch (UDDINamingException e) {
-			// TODO Auto-generated catch block
+			System.out.println("There was an error while calling UDDINaming at listStations(). Check output: ");
 			e.printStackTrace();
 		}
     }

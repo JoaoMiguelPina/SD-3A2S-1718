@@ -91,7 +91,6 @@ public class User {
 		UserView userView = new UserView();
 		userView.setEmail(this.getEmail());
 		userView.setHasBina(this.isHasBina());
-		System.out.println("User has bina? getUserView " + this.isHasBina());
 		userView.setCredit(this.getCredit());
 		return userView;
 	}
@@ -102,10 +101,8 @@ public class User {
 	}
 	
 	public static void setDef(int d) throws BadInit_Exception {
-		if (d < 0) throw new BadInit_Exception("lol", null);
-		System.out.println ("INTEIRO D: " + d);
+		if (d < 0) throw new BadInit_Exception("Default can not be smaller than zero.", null);
 		User.def = d;
-		System.out.println ("Interdef D: " + def);
 	}
 	
 }

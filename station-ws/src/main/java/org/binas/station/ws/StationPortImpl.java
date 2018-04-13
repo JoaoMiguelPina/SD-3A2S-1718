@@ -12,14 +12,8 @@ import org.binas.station.domain.exception.NoSlotAvailException;
  * This class implements the Web Service port type (interface). The annotations
  * below "map" the Java class to the WSDL definitions.
  */
- //TODO
-@WebService(endpointInterface = "org.binas.station.ws.StationPortType",
-wsdlLocation = "station.1_0.wsdl",
-name ="StationWebService",
-portName = "StationPort",
-targetNamespace="http://ws.station.binas.org/",
-serviceName = "StationService"
-)
+// TODO
+@WebService(endpointInterface = "org.binas.station.ws.StationPortType", wsdlLocation = "station.1_0.wsdl", name = "StationWebService", portName = "StationPort", targetNamespace = "http://ws.station.binas.org/", serviceName = "StationService")
 
 public class StationPortImpl implements StationPortType {
 
@@ -41,11 +35,11 @@ public class StationPortImpl implements StationPortType {
 	public StationView getInfo() {
 		Station s = Station.getInstance();
 		StationView sv = new StationView();
-		
+
 		CoordinatesView coord = new CoordinatesView();
 		coord.setX(s.getCoordinates().getX());
 		coord.setY(s.getCoordinates().getY());
-		
+
 		sv.setAvailableBinas(s.getAvailableBinas());
 		sv.setCapacity(s.getMaxCapacity());
 		sv.setCoordinate(coord);
@@ -53,10 +47,10 @@ public class StationPortImpl implements StationPortType {
 		sv.setId(s.getId());
 		sv.setTotalGets(s.getTotalGets());
 		sv.setTotalReturns(s.getTotalReturns());
-		
+
 		return sv;
 	}
-	
+
 	/** Return a bike to the station. */
 	@Override
 	public int returnBina() throws NoSlotAvail_Exception {
@@ -64,108 +58,105 @@ public class StationPortImpl implements StationPortType {
 		try {
 			return s.returnBina();
 		} catch (NoSlotAvailException e) {
-			// TODO Auto-generated catch block
+			System.out.println("There is no slot available at the station.");
 			e.printStackTrace();
 		}
 		return -1;
-	 }
-	
-	 /** Take a bike from the station. */
-	 @Override
-	 public void getBina() throws NoBinaAvail_Exception {
-		 Station s = Station.getInstance();
-		 try {
+	}
+
+	/** Take a bike from the station. */
+	@Override
+	public void getBina() throws NoBinaAvail_Exception {
+		Station s = Station.getInstance();
+		try {
 			s.getBina();
 		} catch (NoBinaAvailException e) {
-			// TODO Auto-generated catch block
+			System.out.println("There is no bina available at the station.");
 			e.printStackTrace();
 		}
-	 }
+	}
 
 	// Test Control operations -----------------------------------------------
 
-	 /** Diagnostic operation to check if service is running. */
-	 @Override
-	 public String testPing(String inputMessage) {
-	  //If no input is received, return a default name.
-	 if (inputMessage == null || inputMessage.trim().length() == 0)
-	 inputMessage = "friend";
-	
-	  //If the station does not have a name, return a default.
-	 String wsName = endpointManager.getWsName();
-	 if (wsName == null || wsName.trim().length() == 0)
-	 wsName = "Station";
-	
-	  //Build a string with a message to return.
-	 StringBuilder builder = new StringBuilder();
-	 builder.append("Hello ").append(inputMessage);
-	 builder.append(" from ").append(wsName);
-	 return builder.toString();
-	 }
-	
-	 /** Return all station variables to default values. */
-	 @Override
-	 public void testClear() {
-	 Station.getInstance().reset();
-	 }
-	
-	 /** Set station variables with specific values. */
-	 @Override
-	 public void testInit(int x, int y, int capacity, int returnPrize) throws
-	 BadInit_Exception {
-	 try {
-	 Station.getInstance().init(x, y, capacity, returnPrize);
-	 } catch (BadInitException e) {
-	 throwBadInit("Invalid initialization values!");
-	 }
-	 }
+	/** Diagnostic operation to check if service is running. */
+	@Override
+	public String testPing(String inputMessage) {
+		// If no input is received, return a default name.
+		if (inputMessage == null || inputMessage.trim().length() == 0)
+			inputMessage = "friend";
+
+		// If the station does not have a name, return a default.
+		String wsName = endpointManager.getWsName();
+		if (wsName == null || wsName.trim().length() == 0)
+			wsName = "Station";
+
+		// Build a string with a message to return.
+		StringBuilder builder = new StringBuilder();
+		builder.append("Hello ").append(inputMessage);
+		builder.append(" from ").append(wsName);
+		return builder.toString();
+	}
+
+	/** Return all station variables to default values. */
+	@Override
+	public void testClear() {
+		Station.getInstance().reset();
+	}
+
+	/** Set station variables with specific values. */
+	@Override
+	public void testInit(int x, int y, int capacity, int returnPrize) throws BadInit_Exception {
+		try {
+			Station.getInstance().init(x, y, capacity, returnPrize);
+		} catch (BadInitException e) {
+			throwBadInit("Invalid initialization values!");
+		}
+	}
 
 	// View helpers ----------------------------------------------------------
 
-	 /** Helper to convert a domain station to a view. */
-	 private StationView buildStationView(Station station) {
-	 StationView view = new StationView();
-	 view.setId(station.getId());
-	 view.setCoordinate(buildCoordinatesView(station.getCoordinates()));
-	 view.setCapacity(station.getMaxCapacity());
-	 view.setTotalGets(station.getTotalGets());
-	 view.setTotalReturns(station.getTotalReturns());
-	 view.setFreeDocks(station.getFreeDocks());
-	 view.setAvailableBinas(station.getAvailableBinas());
-	 return view;
-	 }
-	
-	 /** Helper to convert a domain coordinates to a view. */
-	 private CoordinatesView buildCoordinatesView(Coordinates coordinates) {
-	 CoordinatesView view = new CoordinatesView();
-	 view.setX(coordinates.getX());
-	 view.setY(coordinates.getY());
-	 return view;
-	 }
+	/** Helper to convert a domain station to a view. */
+	private StationView buildStationView(Station station) {
+		StationView view = new StationView();
+		view.setId(station.getId());
+		view.setCoordinate(buildCoordinatesView(station.getCoordinates()));
+		view.setCapacity(station.getMaxCapacity());
+		view.setTotalGets(station.getTotalGets());
+		view.setTotalReturns(station.getTotalReturns());
+		view.setFreeDocks(station.getFreeDocks());
+		view.setAvailableBinas(station.getAvailableBinas());
+		return view;
+	}
+
+	/** Helper to convert a domain coordinates to a view. */
+	private CoordinatesView buildCoordinatesView(Coordinates coordinates) {
+		CoordinatesView view = new CoordinatesView();
+		view.setX(coordinates.getX());
+		view.setY(coordinates.getY());
+		return view;
+	}
 
 	// Exception helpers -----------------------------------------------------
 
-	 /** Helper to throw a new NoBinaAvail exception. */
-	 private void throwNoBinaAvail(final String message) throws
-	 NoBinaAvail_Exception {
-	 NoBinaAvail faultInfo = new NoBinaAvail();
-	 faultInfo.message = message;
-	 throw new NoBinaAvail_Exception(message, faultInfo);
-	 }
-	
-	 /** Helper to throw a new NoSlotAvail exception. */
-	 private void throwNoSlotAvail(final String message) throws
-	 NoSlotAvail_Exception {
-	 NoSlotAvail faultInfo = new NoSlotAvail();
-	 faultInfo.message = message;
-	 throw new NoSlotAvail_Exception(message, faultInfo);
-	 }
-	
-	 /** Helper to throw a new BadInit exception. */
-	 private void throwBadInit(final String message) throws BadInit_Exception {
-	 BadInit faultInfo = new BadInit();
-	 faultInfo.message = message;
-	 throw new BadInit_Exception(message, faultInfo);
-	 }
+	/** Helper to throw a new NoBinaAvail exception. */
+	private void throwNoBinaAvail(final String message) throws NoBinaAvail_Exception {
+		NoBinaAvail faultInfo = new NoBinaAvail();
+		faultInfo.message = message;
+		throw new NoBinaAvail_Exception(message, faultInfo);
+	}
+
+	/** Helper to throw a new NoSlotAvail exception. */
+	private void throwNoSlotAvail(final String message) throws NoSlotAvail_Exception {
+		NoSlotAvail faultInfo = new NoSlotAvail();
+		faultInfo.message = message;
+		throw new NoSlotAvail_Exception(message, faultInfo);
+	}
+
+	/** Helper to throw a new BadInit exception. */
+	private void throwBadInit(final String message) throws BadInit_Exception {
+		BadInit faultInfo = new BadInit();
+		faultInfo.message = message;
+		throw new BadInit_Exception(message, faultInfo);
+	}
 
 }

@@ -88,7 +88,6 @@ public class StationClient implements StationPortType {
 	private void createStub() {
 		 if (verbose)
 		 System.out.println("Creating stub ...");
-		// TODO
 		 service = new StationService();
 		 port = service.getStationPort();
 		

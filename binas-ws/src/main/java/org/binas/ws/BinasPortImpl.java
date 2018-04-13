@@ -22,7 +22,7 @@ import pt.ulisboa.tecnico.sdis.ws.uddi.UDDIRecord;
  * This class implements the Web Service port type (interface). The annotations
  * below "map" the Java class to the WSDL definitions.
  */
-// TODO
+
 @WebService(endpointInterface = "org.binas.ws.BinasPortType", wsdlLocation = "binas.1_0.wsdl", name = "BinasWebService", portName = "BinasPort", targetNamespace = "http://ws.binas.org/", serviceName = "BinasService")
 
 public class BinasPortImpl implements BinasPortType {
@@ -40,9 +40,8 @@ public class BinasPortImpl implements BinasPortType {
 
 	@Override
 	public List<StationView> listStations(Integer numberOfStations, CoordinatesView coordinates) {
-		
+
 		if (numberOfStations == null || coordinates == null || numberOfStations == 0) {
-			System.out.println("É NULO FILHOS DA PUTA");
 			return null;
 		}
 
@@ -51,32 +50,29 @@ public class BinasPortImpl implements BinasPortType {
 		Collection<String> stations;
 		List<StationView> result = new ArrayList<StationView>();
 		TreeMap<Integer, StationView> treeResult = new TreeMap<Integer, StationView>();
-		
+
 		try {
 			UDDIname = this.endpointManager.getUddiNaming();
 			stations = UDDIname.list("A46_Station%");
-			
+
 			for (String station : stations) {
 				s = new StationClient(station);
-				
+
 				int distance_X = s.getInfo().getCoordinate().getX() - coordinates.getX();
 				int distance_Y = s.getInfo().getCoordinate().getY() - coordinates.getY();
 				int dist = (int) (Math.pow(distance_X, 2) + Math.pow(distance_Y, 2));
-				
+
 				StationView d = this.getInfoStation(s.getInfo().getId());
 				treeResult.put(dist, d);
 			}
-			
-			for (int i =0; i < numberOfStations; i++) {
+
+			for (int i = 0; i < numberOfStations; i++) {
 				Integer firstKey = treeResult.firstKey();
 				result.add(treeResult.get(firstKey));
-				treeResult.remove(firstKey);	
+				treeResult.remove(firstKey);
 			}
-			
+
 			return result;
-			
-			
-			
 
 		} catch (UDDINamingException e) {
 			System.out.println("There was an error while calling UDDINaming at listStations(). Check output: ");
@@ -96,8 +92,6 @@ public class BinasPortImpl implements BinasPortType {
 	@Override
 	public StationView getInfoStation(String stationId) throws InvalidStation_Exception {
 
-		System.out.println("Station id:" + stationId);
-
 		if (stationId == null || stationId == "" || !stationId.startsWith("A46_Station"))
 			throw new InvalidStation_Exception(stationId, null);
 
@@ -113,11 +107,10 @@ public class BinasPortImpl implements BinasPortType {
 			s = new StationClient(url);
 			svS = s.getInfo();
 
-
 		} catch (StationClientException e) {
 			throw new InvalidStation_Exception(stationId, null);
 		} catch (UDDINamingException e) {
-			// TODO Auto-generated catch block
+			System.out.println("There was an error while calling UDDINaming at listStations(). Check output: ");
 			e.printStackTrace();
 		}
 
@@ -141,9 +134,7 @@ public class BinasPortImpl implements BinasPortType {
 	public int getCredit(String email) throws UserNotExists_Exception {
 		User user;
 		user = User.getUser(email);
-		System.out.println("ESTOU NO BINASIMPL: " + user.getEmail());
 		int credit = user.getCredit();
-
 		return credit;
 	}
 
@@ -230,25 +221,29 @@ public class BinasPortImpl implements BinasPortType {
 		if (inputMessage == null || inputMessage.trim().equals(""))
 			return null;
 
-		try {
-			UDDIname = this.endpointManager.getUddiNaming();
-			stations = UDDIname.listRecords("A46_Station%");
 
-			res += "Found " + stations.size() + " stations.\n";
+			try {
+				UDDIname = this.endpointManager.getUddiNaming();
+				stations = UDDIname.listRecords("A46_Station%");
 
-			for (UDDIRecord stationName : stations) {
-				System.out.println(stationName);
+				res += "Found " + stations.size() + " stations.\n";
+
+				for (UDDIRecord stationName : stations) {
+					res += "[Pinging Station" + stationName.getOrgName() + "][Anwser]";
+					StationClient sc = new StationClient(stationName.getUrl());
+					res += sc.testPing(inputMessage) + "\n";
+				}
+				System.out.println(res);
+			} catch (UDDINamingException e1) {
+				System.out.println("There was an error while calling UDDINaming at listStations(). Check output: ");
+				e1.printStackTrace();
+			} catch (StationClientException e) {
+				System.out
+				.println("There was an error while calling the StationClient at testInitStation(). Check output: ");
+		e.printStackTrace();
 			}
+			
 
-			for (UDDIRecord stationName : stations) {
-				res += "[Pinging Station" + stationName.getOrgName() + "][Aswser]";
-				StationClient sc = new StationClient(stationName.getUrl());
-				res += sc.testPing(inputMessage) + "\n";
-			}
-			System.out.println(res);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		return res;
 
 	}
@@ -290,9 +285,7 @@ public class BinasPortImpl implements BinasPortType {
 
 		try {
 			UDDIname = this.endpointManager.getUddiUrl();
-			System.out.println("Station id no testInitStation antes: " + stationId);
 			sc = new StationClient(UDDIname, stationId);
-			System.out.println("Station id no testInitStation depois: " + sc.getInfo().getId());
 			sc.testInit(x, y, capacity, returnPrize);
 
 		} catch (StationClientException e) {
