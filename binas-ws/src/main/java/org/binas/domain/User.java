@@ -96,12 +96,15 @@ public class User {
 	}
 	
 	public static void clear() {
+		def = 10;
 		users.clear();
 	}
 	
 	public static void setDef(int d) throws BadInit_Exception {
 		if (d < 0) throw new BadInit_Exception("lol", null);
+		System.out.println ("INTEIRO D: " + d);
 		User.def = d;
+		System.out.println ("Interdef D: " + def);
 	}
 	
 }

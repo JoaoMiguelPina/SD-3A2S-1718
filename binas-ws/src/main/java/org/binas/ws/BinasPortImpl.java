@@ -126,10 +126,9 @@ public class BinasPortImpl implements BinasPortType {
 	@Override
 	public int getCredit(String email) throws UserNotExists_Exception {
 		User user;
-		int credit = 0;
 		user = User.getUser(email);
 		System.out.println("ESTOU NO BINASIMPL: " + user.getEmail());
-		credit = user.getCredit();
+		int credit = user.getCredit();
 		
 		return credit;
 	}
@@ -144,7 +143,7 @@ public class BinasPortImpl implements BinasPortType {
 	@Override
 	public void rentBina(String stationId, String email) throws AlreadyHasBina_Exception, InvalidStation_Exception,
 			NoBinaAvail_Exception, NoCredit_Exception, UserNotExists_Exception {
-		if (stationId == null || stationId.trim().equals("")) throw new InvalidStation_Exception(email, null);
+		if (stationId == null || stationId.trim().equals("") || !stationId.startsWith("A46_Station")) throw new InvalidStation_Exception(email, null);
 		if (email == null || email == "") throw new UserNotExists_Exception(email, null);
 		StationClient s;
 		User user;
@@ -239,15 +238,24 @@ public class BinasPortImpl implements BinasPortType {
 
 	@Override
 	public void testClear() {
-		try {
 			User.clear();
+			Collection<UDDIRecord> stations = null;
 			
-			
-			UDDINaming UDDIname = this.endpointManager.getUddiNaming();
-			Collection<UDDIRecord> stations = UDDIname.listRecords("A46_Station%");
+			UDDINaming UDDIname;
+			try {
+				UDDIname = this.endpointManager.getUddiNaming();
+				stations = UDDIname.listRecords("A46_Station%");
+			} catch (UDDINamingException e1) {
+				System.out.println("There was an error while calling UDDINaming at listStations(). Check output: ");
+				e1.printStackTrace();
+			}
 			StationClient sc;
 			for (UDDIRecord stationName : stations) {
-				sc = new StationClient(stationName.getUrl());
+				try {
+					sc = new StationClient(stationName.getUrl());
+				} catch (StationClientException e) {
+					continue;
+				}
 				
 				sc.setWsName(stationName.getOrgName());
 				sc.testClear();
@@ -255,10 +263,6 @@ public class BinasPortImpl implements BinasPortType {
 			}
 			
 		
-		}
-		catch (Exception e){
-			e.printStackTrace();
-		}
 		
 	}
 
