@@ -88,40 +88,39 @@ public class BinasPortImpl implements BinasPortType {
 
 	@Override
 	public StationView getInfoStation(String stationId) throws InvalidStation_Exception {
+		
+		if (stationId == null || stationId == "") throw new InvalidStation_Exception(stationId, null);
+		
 	
-		UDDINaming UDDIname;
+		String UDDIname;
 		StationClient s;
 		org.binas.station.ws.StationView svS = new org.binas.station.ws.StationView();
 		StationView svB = new StationView();
 		
+		
 		try {
-			UDDIname = this.endpointManager.getUddiNaming();
-			String url = UDDIname.lookup(stationId);
-			s = new StationClient(url);
+			UDDIname = this.endpointManager.getUddiUrl();
+			s = new StationClient(UDDIname, stationId);
 			svS = s.getInfo();
 			
-		} catch (UDDINamingException e) {
-			System.out.println("There was an error while calling UDDINaming at getInfoStation(). Check output: ");
-			e.printStackTrace();
+			CoordinatesView coord = new CoordinatesView();
+			coord.setX(svS.getCoordinate().getX());
+			coord.setY(svS.getCoordinate().getY());
+			
+			svB.setAvailableBinas(svS.getAvailableBinas());
+			svB.setCapacity(svS.getCapacity());
+			svB.setCoordinate(coord);
+			svB.setFreeDocks(svS.getFreeDocks());
+			svB.setId(svS.getId());
+			svB.setTotalGets(svS.getTotalGets());
+			svB.setTotalReturns(svS.getTotalReturns());
+			
+			return svB;
+			
+		} catch (StationClientException e) {
+			throw new InvalidStation_Exception(stationId, null);
 		}
-		catch (StationClientException e) {
-			System.out.println("There was an error while calling the StationClient at getInfoStation(). Check output: ");
-			e.printStackTrace();
-		}
 		
-		CoordinatesView coord = new CoordinatesView();
-		coord.setX(svS.getCoordinate().getX());
-		coord.setY(svS.getCoordinate().getY());
-		
-		svB.setAvailableBinas(svS.getAvailableBinas());
-		svB.setCapacity(svS.getCapacity());
-		svB.setCoordinate(coord);
-		svB.setFreeDocks(svS.getFreeDocks());
-		svB.setId(svS.getId());
-		svB.setTotalGets(svS.getTotalGets());
-		svB.setTotalReturns(svS.getTotalReturns());
-		
-		return svB;
 	}
 
 	@Override
@@ -145,7 +144,8 @@ public class BinasPortImpl implements BinasPortType {
 	@Override
 	public void rentBina(String stationId, String email) throws AlreadyHasBina_Exception, InvalidStation_Exception,
 			NoBinaAvail_Exception, NoCredit_Exception, UserNotExists_Exception {
-		
+		if (stationId == null || stationId.trim().equals("")) throw new InvalidStation_Exception(email, null);
+		if (email == null || email == "") throw new UserNotExists_Exception(email, null);
 		StationClient s;
 		User user;
 		try {
@@ -163,9 +163,9 @@ public class BinasPortImpl implements BinasPortType {
 				user.removeOneCredit();
 			}
 		} catch (StationClientException e) {
-			System.out.println("There was an error while calling the StationClient. Check output: " + e);
+			throw new InvalidStation_Exception(email, null);
 		} catch (org.binas.station.ws.NoBinaAvail_Exception e) {
-			System.out.println("There is no bina available at this station.");
+			throw new NoBinaAvail_Exception("There is no bina available at this station.", null);
 		} 
 	}
 
