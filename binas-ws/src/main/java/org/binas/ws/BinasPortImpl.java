@@ -39,7 +39,7 @@ public class BinasPortImpl implements BinasPortType {
 	}
 
 	@Override
-	public List<StationView> listStations(Integer numberOfStations, CoordinatesView coordinates) {
+	public synchronized List<StationView> listStations(Integer numberOfStations, CoordinatesView coordinates) {
 
 		if (numberOfStations == null || coordinates == null || numberOfStations == 0) {
 			return null;
@@ -90,7 +90,7 @@ public class BinasPortImpl implements BinasPortType {
 	}
 
 	@Override
-	public StationView getInfoStation(String stationId) throws InvalidStation_Exception {
+	public synchronized StationView getInfoStation(String stationId) throws InvalidStation_Exception {
 
 		if (stationId == null || stationId == "" || !stationId.startsWith("A46_Station"))
 			throw new InvalidStation_Exception(stationId, null);
@@ -131,7 +131,7 @@ public class BinasPortImpl implements BinasPortType {
 	}
 
 	@Override
-	public int getCredit(String email) throws UserNotExists_Exception {
+	public synchronized int getCredit(String email) throws UserNotExists_Exception {
 		User user;
 		user = User.getUser(email);
 		int credit = user.getCredit();
@@ -139,14 +139,14 @@ public class BinasPortImpl implements BinasPortType {
 	}
 
 	@Override
-	public UserView activateUser(String email) throws EmailExists_Exception, InvalidEmail_Exception {
+	public synchronized UserView activateUser(String email) throws EmailExists_Exception, InvalidEmail_Exception {
 		User user = new User(email);
 		UserView userView = user.getUserView();
 		return userView;
 	}
 
 	@Override
-	public void rentBina(String stationId, String email) throws AlreadyHasBina_Exception, InvalidStation_Exception,
+	public synchronized void rentBina(String stationId, String email) throws AlreadyHasBina_Exception, InvalidStation_Exception,
 			NoBinaAvail_Exception, NoCredit_Exception, UserNotExists_Exception {
 		if (stationId == null || stationId.trim().equals("") || !stationId.startsWith("A46_Station"))
 			throw new InvalidStation_Exception(email, null);
@@ -179,7 +179,7 @@ public class BinasPortImpl implements BinasPortType {
 	}
 
 	@Override
-	public void returnBina(String stationId, String email)
+	public synchronized void returnBina(String stationId, String email)
 			throws FullStation_Exception, InvalidStation_Exception, NoBinaRented_Exception, UserNotExists_Exception {
 
 		if (stationId == null || stationId.trim().equals("") || !stationId.startsWith("A46_Station"))
