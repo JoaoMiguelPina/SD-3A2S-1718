@@ -223,6 +223,7 @@ public class BinasPortImpl implements BinasPortType {
 		UDDINaming UDDIname;
 		String res = "";
 		Collection<UDDIRecord> stations;
+		if (inputMessage == null || inputMessage.trim().equals("")) return null;
 		
 		try {
 			UDDIname = this.endpointManager.getUddiNaming();
