@@ -15,6 +15,7 @@ import org.binas.ws.NoCredit_Exception;
 import org.binas.ws.StationView;
 import org.binas.ws.UserNotExists_Exception;
 import org.binas.ws.UserView;
+import org.junit.After;
 import org.junit.Test;
 
 import junit.framework.Assert;
@@ -223,8 +224,11 @@ public class ReturnBinaIT extends BaseIT{
 		} catch (UserNotExists_Exception e) {
 			System.out.println("The user: " + e + "doesnt exists.");
 		}
-		
-		
-		
+			
+	}
+	
+	@After
+	public void tearDown() {
+		client.testClear();
 	}
 }

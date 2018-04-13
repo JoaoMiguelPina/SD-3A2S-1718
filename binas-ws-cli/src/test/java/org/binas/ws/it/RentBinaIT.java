@@ -21,13 +21,17 @@ import org.binas.ws.cli.BinasClientException;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RentBinaTest extends BaseIT{
+public class RentBinaIT extends BaseIT{
 
 	String stationId1 = "A46_Station1";
 	String stationId2 = "A46_Station2";
 	String stationId3 = "A46_Station3";
 	
 	String userMail = "sd.rent@tecnico.pt";
+	String userMail2 = "sd2.rent@tecnico.pt";
+	String userMail3 = "sd3.rent@tecnico.pt";
+	
+	int valor;
 	
 	@Test
 	public void success() {
@@ -36,40 +40,45 @@ public class RentBinaTest extends BaseIT{
 			
 			//STATION 1
 			int bonus1 = 1;
-			client.testInitStation(stationId1, 10, 10, 5, bonus1);
+			client.testInitStation(stationId1, 10, 10, 2, bonus1);
 			org.binas.ws.StationView sv1 = client.getInfoStation(stationId1);
-			assertNotNull(sv1);
+			
 			
 			client.activateUser(userMail);
+			valor = client.getCredit(userMail);
 			client.rentBina(sv1.getId(), userMail);
 			
 			assertEquals(1, client.getInfoStation(sv1.getId()).getFreeDocks());
 			assertEquals(1, client.getInfoStation(sv1.getId()).getTotalGets());
+			assertEquals(valor-1, client.getCredit(userMail));
 			
 			//STATION 2
 			int bonus2 = 2;
 			client.testInitStation(stationId2, 17, 17, 4, bonus2);
 			org.binas.ws.StationView sv2 = client.getInfoStation(stationId2);
-			assertNotNull(sv2);
 			
-			client.activateUser(userMail);
-			client.rentBina(sv2.getId(), userMail);
 			
-			assertEquals(1, client.getInfoStation(sv2.getId()).getFreeDocks());
+			client.activateUser(userMail2);
+			valor = client.getCredit(userMail2);
+			client.rentBina(sv2.getId(), userMail2);
+			
+			assertEquals(3, client.getInfoStation(sv2.getId()).getFreeDocks());
 			assertEquals(1, client.getInfoStation(sv2.getId()).getTotalGets());
-
+			assertEquals(valor-1, client.getCredit(userMail2));
 			
 			//STATION 3
 			int bonus3 = 3;
 			client.testInitStation(stationId3, 7, 7, 22, bonus3);
 			org.binas.ws.StationView sv3 = client.getInfoStation(stationId3);
-			assertNotNull(sv3);
 			
-			client.activateUser(userMail);
-			client.rentBina(sv3.getId(), userMail);
 			
-			assertEquals(1, client.getInfoStation(sv3.getId()).getFreeDocks());
+			client.activateUser(userMail3);
+			valor = client.getCredit(userMail3);
+			client.rentBina(sv3.getId(), userMail3);
+			
+			assertEquals(21, client.getInfoStation(sv3.getId()).getFreeDocks());
 			assertEquals(1, client.getInfoStation(sv3.getId()).getTotalGets());
+			assertEquals(valor-1, client.getCredit(userMail3));
 			
 		}catch(BadInit_Exception e) {
 			System.out.println("There was an error while creating station. Check output: " + e);
