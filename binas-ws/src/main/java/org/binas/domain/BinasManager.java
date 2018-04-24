@@ -1,56 +1,44 @@
 package org.binas.domain;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.regex.Pattern;
 
-import javax.xml.ws.Endpoint;
-
-import org.binas.ws.BinasPortImpl;
-import org.binas.ws.BinasPortType;
+import org.binas.domain.exception.BadInitException;
+import org.binas.domain.exception.InsufficientCreditsException;
+import org.binas.domain.exception.InvalidEmailException;
+import org.binas.domain.exception.StationNotFoundException;
+import org.binas.domain.exception.UserAlreadyExistsException;
+import org.binas.domain.exception.UserAlreadyHasBinaException;
+import org.binas.domain.exception.UserHasNoBinaException;
+import org.binas.domain.exception.UserNotFoundException;
+import org.binas.station.ws.BadInit_Exception;
+import org.binas.station.ws.NoBinaAvail_Exception;
+import org.binas.station.ws.NoSlotAvail_Exception;
+import org.binas.station.ws.cli.StationClient;
+import org.binas.station.ws.cli.StationClientException;
+import org.binas.ws.StationView;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINamingException;
+import pt.ulisboa.tecnico.sdis.ws.uddi.UDDIRecord;
 
+/**
+ * BinasManager class 
+ * 
+ * Class that have the methods used to get/Return Bina, beginning a station, querying all stations, etc.
+ *
+ */
 public class BinasManager {
-
-	/** Web Service location to publish */
-	private String wsURL;
-
-	/** UDDI naming server location */
+	/**
+	 * UDDI server URL
+	 */
 	private String uddiURL = null;
-	/** Web Service name */
-	private String wsName = null;
 
-	/** Web Service end point */
-	private Endpoint endpoint = null;
-
-	/** Port implementation */
-	private BinasPortImpl portImpl = new BinasPortImpl(this);
-
-	/** Obtain Port implementation */
-	public BinasPortType getPort() {
-		return portImpl;
-	}
-
-	/** UDDI Naming instance for contacting UDDI server */
-	private UDDINaming uddiNaming = null;
-
-	/** Get UDDI Naming instance for contacting UDDI server */
-	public synchronized UDDINaming getUddiNaming() throws UDDINamingException {
-
-		this.uddiNaming = new UDDINaming(this.uddiURL);
-		return uddiNaming;
-	}
-
-	/** output option */
-	private boolean verbose = true;
-
-	public boolean isVerbose() {
-		return verbose;
-	}
-
-	public void setVerbose(boolean verbose) {
-		this.verbose = verbose;
-	}
+	/**
+	 * Station name
+	 */
+	private String stationTemplateName = null;
 
 	// Singleton -------------------------------------------------------------
 
@@ -69,104 +57,144 @@ public class BinasManager {
 		return SingletonHolder.INSTANCE;
 	}
 
-	/** constructor with provided UDDI location, WS name, and WS URL */
-	public BinasManager(String uddiURL, String wsName, String wsURL) {
-		this.uddiURL = uddiURL;
-		this.wsName = wsName;
-		this.wsURL = wsURL;
+	// Binas Logic ----------------------------------------------------------
+
+	public User createUser(String email) throws UserAlreadyExistsException, InvalidEmailException {
+		return UsersManager.getInstance().RegisterNewUser(email);
 	}
 
-	/** constructor with provided web service URL */
-	public BinasManager(String wsName, String wsURL) {
-		this.wsName = wsName;
-		this.wsURL = wsURL;
+	public User getUser(String email) throws UserNotFoundException {
+		return UsersManager.getInstance().getUser(email);
+	}
+	
+	public void rentBina(String stationId, String email) throws UserNotFoundException, InsufficientCreditsException, UserAlreadyHasBinaException, StationNotFoundException, NoBinaAvail_Exception {
+		User user = getUser(email);
+		synchronized (user) {
+			//validate user can rent
+			user.validateCanRentBina();
+
+			//validate station can rent
+			StationClient stationCli = getStation(stationId);
+			stationCli.getBina();
+			
+			//apply rent action to user
+			user.effectiveRent();
+		}
+	}
+	
+	public void returnBina(String stationId, String email) throws UserNotFoundException, NoSlotAvail_Exception, UserHasNoBinaException, StationNotFoundException {
+		User user = getUser(email);
+		synchronized (user) {
+			//validate user can rent
+			user.validateCanReturnBina();
+			
+			//validate station can rent
+			StationClient stationCli = getStation(stationId);
+			int prize = stationCli.returnBina();
+			
+			//apply rent action to user
+			user.effectiveReturn(prize);
+		}		
 	}
 
-	/** Get Web Service UDDI publication name */
-	public String getWsName() {
-		return wsName;
+	public StationClient getStation(String stationId) throws StationNotFoundException {
+
+		Collection<String> stations = this.getStations();
+		String uddiUrl = BinasManager.getInstance().getUddiURL();
+		
+		for (String s : stations) {
+			try {
+				StationClient sc = new StationClient(uddiUrl, s);
+				org.binas.station.ws.StationView sv = sc.getInfo();
+				String idToCompare = sv.getId();
+				if (idToCompare.equals(stationId)) {
+					return sc;
+				}
+			} catch (StationClientException e) {
+				continue;
+			}
+		}
+		
+		throw new StationNotFoundException();
+	}
+	
+	
+	// UDDI ------------------------------------------------------------------
+
+	public void initUddiURL(String uddiURL) {
+		setUddiURL(uddiURL);
 	}
 
-	public String getUddiUrl() {
+	public void initStationTemplateName(String stationTemplateName) {
+		setStationTemplateName(stationTemplateName);
+	}
+
+	public String getUddiURL() {
 		return uddiURL;
 	}
 
-	/* end point management */
+	private void setUddiURL(String url) {
+		uddiURL = url;
+	}
 
-	public void start() throws Exception {
+	private void setStationTemplateName(String sn) {
+		stationTemplateName = sn;
+	}
+
+	public String getStationTemplateName() {
+		return stationTemplateName;
+	}
+
+	/**
+	 * Get list of stations for a given query
+	 * 
+	 * @return List of stations
+	 */
+	public Collection<String> getStations() {
+		Collection<UDDIRecord> records = null;
+		Collection<String> stations = new ArrayList<String>();
 		try {
-			// publish end point
-			endpoint = Endpoint.create(this.portImpl);
-			if (verbose) {
-				System.out.printf("Starting %s%n", wsURL);
-			}
-			endpoint.publish(wsURL);
-		} catch (Exception e) {
-			endpoint = null;
-			if (verbose) {
-				System.out.printf("Caught exception when starting: %s%n", e);
-				e.printStackTrace();
-			}
-			throw e;
+			UDDINaming uddi = new UDDINaming(uddiURL);
+			records = uddi.listRecords(stationTemplateName + "%");
+			for (UDDIRecord u : records)
+				stations.add(u.getOrgName());
+		} catch (UDDINamingException e) {
 		}
-		publishToUDDI();
+		return stations;
 	}
 
-	public void awaitConnections() {
-		if (verbose) {
-			System.out.println("Awaiting connections");
-			System.out.println("Press enter to shutdown");
+	public void reset() {
+		UsersManager.getInstance().reset();
+	}
+
+	public void init(int userInitialPoints) throws BadInitException {
+		if(userInitialPoints < 0) {
+			throw new BadInitException();
 		}
+		UsersManager.getInstance().init(userInitialPoints);
+	}
+
+	/**
+	 * 
+	 * Inits a Station with a determined ID, coordinates, capacity and returnPrize
+	 * 
+	 * @param stationId
+	 * @param x
+	 * @param y
+	 * @param capacity
+	 * @param returnPrize
+	 * @throws BadInitException
+	 * @throws StationNotFoundException
+	 */
+	public void testInitStation(String stationId, int x, int y, int capacity, int returnPrize) throws BadInitException, StationNotFoundException {
+		//validate station can rent
+		StationClient stationCli;
 		try {
-			System.in.read();
-		} catch (IOException e) {
-			if (verbose) {
-				System.out.printf("Caught i/o exception when awaiting requests: %s%n", e);
-			}
+			stationCli = getStation(stationId);
+			stationCli.testInit(x, y, capacity, returnPrize);
+		} catch (BadInit_Exception e) {
+			throw new BadInitException(e.getMessage());
 		}
+		
 	}
-
-	public void stop() throws Exception {
-		try {
-			if (endpoint != null) {
-				// stop end point
-				endpoint.stop();
-				if (verbose) {
-					System.out.printf("Stopped %s%n", wsURL);
-				}
-			}
-		} catch (Exception e) {
-			if (verbose) {
-				System.out.printf("Caught exception when stopping: %s%n", e);
-			}
-		}
-		this.portImpl = null;
-		unpublishFromUDDI();
-	}
-
-	/* UDDI */
-
-	void publishToUDDI() throws Exception {
-		this.uddiNaming = new UDDINaming(uddiURL);
-		this.uddiNaming.rebind(this.wsName, this.wsURL);
-	}
-
-	void unpublishFromUDDI() {
-		if (this.uddiNaming != null) {
-			try {
-				this.uddiNaming.unbind(this.wsName);
-			} catch (UDDINamingException e) {
-				System.out.println("There was an error while calling UDDINaming at listStations(). Check output: ");
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void setBinas(String uddiURL2, String wsName2, String wsURL2) {
-		this.uddiURL = uddiURL2;
-		this.wsName = wsName2;
-		this.wsURL = wsURL2;
-
-	}
-
 }

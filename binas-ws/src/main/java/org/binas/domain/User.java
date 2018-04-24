@@ -1,108 +1,83 @@
 package org.binas.domain;
 
-import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import org.binas.ws.BadInit_Exception;
-import org.binas.ws.EmailExists_Exception;
-import org.binas.ws.InvalidEmail_Exception;
-import org.binas.ws.UserNotExists_Exception;
-import org.binas.ws.UserView;
+import org.binas.domain.exception.InsufficientCreditsException;
+import org.binas.domain.exception.UserAlreadyHasBinaException;
+import org.binas.domain.exception.UserHasNoBinaException;
 
+/**
+ * 
+ * Domain class that represents the User and deals with their creation, balance manipulation, email manipulation, etc.
+ * 
+ *
+ */
 public class User {
-	
+
 	private String email;
-	private boolean hasBina;
-	private int credit;
-	private static int def = 10;
+	private AtomicInteger balance;
+	private AtomicBoolean hasBina = new AtomicBoolean(false);
 	
-	private static HashMap<String, User> users = new HashMap<String, User>();
-	
-	public User (String email) throws InvalidEmail_Exception, EmailExists_Exception {
-		checkEmail(email);
+	public User(String email, int initialBalance) {
 		this.email = email;
-		this.hasBina = false;
-		this.credit = def;
-		addUser(this);
+		balance = new AtomicInteger(initialBalance);
 	}
 	
-	public void checkEmail(String email) throws InvalidEmail_Exception, EmailExists_Exception {
-		
-		String pattern = "^(([a-zA-Z0-9]+)|([a-zA-Z0-9]+\\.?[a-zA-Z0-9]+)+)@(([a-zA-Z0-9]+)|([a-zA-Z0-9]+\\.?[a-zA-Z0-9]+)+)";
-		if(users.get(email) != null) throw new EmailExists_Exception(email, null);
-		if(!email.matches(pattern)) throw new InvalidEmail_Exception(email, null);
-		
+	public synchronized void decrementBalance() throws InsufficientCreditsException{
+		 if(balance.get() > 0) {
+			 balance.decrementAndGet();
+		 } else {
+			 throw new InsufficientCreditsException();
+		 }
+	}
+
+	
+	public synchronized void incrementBalance(int amount){
+		 balance.getAndAdd(amount);
 	}
 	
 	public String getEmail() {
 		return email;
 	}
 	
-	public boolean isHasBina() {
-		return hasBina;
+	public boolean getHasBina() {
+		return hasBina.get();
 	}
 	
+
 	public int getCredit() {
-		return credit;
+		return balance.get();
 	}
-	
-	public void setEmail(String email) {
-		this.email = email;
+
+	public synchronized void validateCanRentBina() throws InsufficientCreditsException, UserAlreadyHasBinaException{
+		if(getHasBina()) {
+			throw new UserAlreadyHasBinaException();
+		}
+		if(getCredit() <= 0) {
+			throw new InsufficientCreditsException();
+		}
+		
 	}
-	
-	public void setHasBina(boolean value) {
-		this.hasBina = value;
+	public synchronized void validateCanReturnBina() throws UserHasNoBinaException {
+		if( ! getHasBina()) {
+			throw new UserHasNoBinaException();
+		}
 	}
-	
-	public void setCredit(int credit) {
-		this.credit = credit;
+
+	public synchronized void effectiveRent() throws InsufficientCreditsException {
+		decrementBalance();
+		hasBina.set(true);
 	}
-	
-	public void addUser(User user) {
-		users.put(user.getEmail(), user);
+
+	public synchronized void effectiveReturn(int prize) throws UserHasNoBinaException {
+		if( ! getHasBina()) {
+			throw new UserHasNoBinaException();
+		}
+		hasBina.set(false);
+		incrementBalance(prize);
 	}
-	
-	public void addCredit (int credit) {
-		this.credit += credit;
-	}
-	
-	public void addOneCredit () {
-		this.credit += 1;
-	}
-	
-	public void removeCredit (int credit) {
-		this.credit -= credit;
-	}
-	
-	public void removeOneCredit () {
-		this.credit -= 1;
-	}
-	
-	public static User getUser(String email) throws UserNotExists_Exception{
-		User user = users.get(email);
-		if (user == null) throw new UserNotExists_Exception("The email " + email + " is not registered.", null);
-		return user;
-	}
-	
-	public void deleteUser(String email) {
-		users.remove(email);
-	}
-	
-	public UserView getUserView() {
-		UserView userView = new UserView();
-		userView.setEmail(this.getEmail());
-		userView.setHasBina(this.isHasBina());
-		userView.setCredit(this.getCredit());
-		return userView;
-	}
-	
-	public static void clear() {
-		def = 10;
-		users.clear();
-	}
-	
-	public static void setDef(int d) throws BadInit_Exception {
-		if (d < 0) throw new BadInit_Exception("Default can not be smaller than zero.", null);
-		User.def = d;
-	}
+
+
 	
 }

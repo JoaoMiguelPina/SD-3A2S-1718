@@ -1,63 +1,94 @@
 package org.binas.ws.it;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import org.binas.ws.BadInit_Exception;
-import org.binas.ws.InvalidStation_Exception;
-import org.binas.ws.StationView;
-import org.junit.After;
-import org.junit.Test;
+import org.binas.ws.*;
+import org.junit.*;
 
-public class GetInfoStationIT extends BaseIT{
+/*
+ * This class should return info about the station
+ */
+public class GetInfoStationIT extends BaseIT  {
+	private final static int X1 = 5;
+	private final static int Y1 = 5;
+	private final static int X2 = 5;
+	private final static int Y2 = 5;
+	private final static int X3 = 5;
+	private final static int Y3 = 5;
+	private final static int CAPACITY = 20;
+	private final static int RETURN_PRIZE = 0;
 	
-	private StationView station;
-	
-	@Test
-	public void success() {
-		
-		try {
-			client.testInitStation("A46_Station1", 22, 7, 6, 2);
-			station = client.getInfoStation("A46_Station1");
-			
-			assertEquals(22, (int) station.getCoordinate().getX());
-			assertEquals(7, (int) station.getCoordinate().getY());
-			assertEquals(6, station.getCapacity());
-			assertEquals(6, station.getAvailableBinas());
-			assertEquals(0, station.getFreeDocks());
-			assertEquals(0, station.getTotalGets());
-			assertEquals(0, station.getTotalReturns());
-			
-			
-		} catch (BadInit_Exception e) {
-			e.printStackTrace();
-		} catch (InvalidStation_Exception e) {
-			e.printStackTrace();
-		}
-		
+	// one-time initialization and clean-up
+	@BeforeClass
+	public static void oneTimeSetUp() throws BadInit_Exception {
+		binasTestClear();
+		client.testInitStation(stationBaseName + "1", X1, Y1, CAPACITY, RETURN_PRIZE);
+		client.testInitStation(stationBaseName + "2", X2, Y2, CAPACITY, RETURN_PRIZE);
+		client.testInitStation(stationBaseName + "3", X3, Y3, CAPACITY, RETURN_PRIZE);
 	}
-	
-	@Test(expected = InvalidStation_Exception.class)
-	public void invalidStationId() throws InvalidStation_Exception {
-		station = client.getInfoStation("CXX_Station");
-	}	
-	
-	@Test(expected = InvalidStation_Exception.class)
-	public void nullStation() throws InvalidStation_Exception {
-		station = client.getInfoStation(null);
+
+	@AfterClass
+	public static void oneTimeTearDown() {
 	}
-	
-	@Test(expected = InvalidStation_Exception.class)
-	public void emptyStation() throws InvalidStation_Exception {
-		station = client.getInfoStation("");
+
+	// members
+
+	// initialization and clean-up for each test
+	@Before
+	public void setUp() {
 	}
-	
-	@Test(expected = InvalidStation_Exception.class)
-	public void spaceStation() throws InvalidStation_Exception {
-		station = client.getInfoStation(" ");
-	}
-	
+
 	@After
 	public void tearDown() {
-		client.testClear();
 	}
+
+			
+			 
+	// tests
+		
+	@Test
+    public void getInfoStationSingleValidTest() throws InvalidStation_Exception {
+        StationView view = client.getInfoStation(stationBaseName + "1");
+	 	
+		assertNotNull(view);
+		assertEquals(CAPACITY, view.getAvailableBinas());
+		assertEquals(CAPACITY, view.getCapacity());
+		assertEquals(X1, view.getCoordinate().getX().intValue());
+		assertEquals(Y1, view.getCoordinate().getY().intValue());
+		assertEquals(0, view.getFreeDocks());
+		assertEquals(0, view.getTotalGets());
+		assertEquals(0, view.getTotalReturns());
+		assertEquals(stationBaseName + "1", view.getId());
+    }
+	
+	@Test
+    public void getInfoStationAllValidTest() throws InvalidStation_Exception {
+        StationView view1 = client.getInfoStation(stationBaseName + "1");
+        StationView view2 = client.getInfoStation(stationBaseName + "2");
+        StationView view3 = client.getInfoStation(stationBaseName + "3");
+	 	
+        assertEquals(X1, view1.getCoordinate().getX().intValue());
+		assertEquals(Y1, view1.getCoordinate().getY().intValue());
+		assertEquals(X2, view2.getCoordinate().getX().intValue());
+		assertEquals(Y2, view2.getCoordinate().getY().intValue());
+		assertEquals(X3, view3.getCoordinate().getX().intValue());
+		assertEquals(Y3, view3.getCoordinate().getY().intValue());
+        
+    }
+	 
+	 
+	@Test(expected = InvalidStation_Exception.class)
+	public void getInfoStationUnknownTest() throws InvalidStation_Exception {
+		client.getInfoStation("Unknown");
+	}
+	
+	@Test(expected = InvalidStation_Exception.class)
+	public void getInfoStationNullTest() throws InvalidStation_Exception {
+		client.getInfoStation(null);
+	}
+		 
+
 }
