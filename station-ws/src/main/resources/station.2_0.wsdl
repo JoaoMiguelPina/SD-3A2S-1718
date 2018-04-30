@@ -36,6 +36,13 @@
                     <xs:element name="freeDocks" type="xs:int" />
                 </xs:sequence>
             </xs:complexType>
+            
+            <xs:complexType name="balanceInfo">
+                <xs:sequence>
+                    <xs:element name="value" type="xs:double" />
+                    <xs:element name="tag" type="xs:int" />
+                </xs:sequence>
+            </xs:complexType>
 
             <xs:complexType name="getInfo">
                 <xs:sequence />
@@ -48,6 +55,35 @@
                 </xs:sequence>
             </xs:complexType>
             <xs:element name="getInfoResponse" type="tns:getInfoResponse" />
+            
+            <xs:complexType name="getBalance">
+                <xs:sequence>
+                    <xs:element name="user_id" type="xs:string"
+                        minOccurs="0" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="getBalance" type="tns:getBalance" />
+
+            <xs:complexType name="getBalanceResponse">
+                <xs:sequence>
+                    <xs:element name="balanceInfo" type="tns:balanceInfo" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="getBalanceResponse" type="tns:getBalanceResponse" />
+            
+            <xs:complexType name="setBalance">
+                <xs:sequence>
+                    <xs:element name="user_id" type="xs:string"
+                        minOccurs="0" />
+                    <xs:element name="user_balance" type="xs:double"/>
+                    <xs:element name="tag" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="setBalance" type="tns:setBalance" />
+
+            <xs:complexType name="setBalanceResponse">
+            </xs:complexType>
+            <xs:element name="setBalanceResponse" type="tns:setBalanceResponse" />
 
             <xs:complexType name="getBina">
                 <xs:sequence />
@@ -147,6 +183,20 @@
     <message name="getInfoResponse">
         <part name="parameters" element="tns:getInfoResponse" />
     </message>
+    
+    <message name="getBalance">
+        <part name="parameters" element="tns:getBalance" />
+    </message>
+    <message name="getBalanceResponse">
+        <part name="parameters" element="tns:getBalanceResponse" />
+    </message>
+    
+    <message name="setBalance">
+        <part name="parameters" element="tns:setBalance" />
+    </message>
+    <message name="setBalanceResponse">
+        <part name="parameters" element="tns:setBalanceResponse" />
+    </message>
 
     <message name="getBina">
         <part name="parameters" element="tns:getBina" />
@@ -205,6 +255,20 @@
             <output wsam:Action="http://ws.station.binas.org/Station/getInfoResponse"
                 message="tns:getInfoResponse" />
         </operation>
+        
+        <operation name="getBalance">
+            <input wsam:Action="http://ws.station.binas.org/Station/getBalanceRequest"
+                message="tns:getBalance" />
+            <output wsam:Action="http://ws.station.binas.org/Station/getBalanceResponse"
+                message="tns:getBalanceResponse" />
+        </operation>
+        
+        <operation name="setBalance">
+            <input wsam:Action="http://ws.station.binas.org/Station/setBalanceRequest"
+                message="tns:setBalance" />
+            <output wsam:Action="http://ws.station.binas.org/Station/setBalanceResponse"
+                message="tns:setBalanceResponse" />
+        </operation>
 
         <operation name="getBina">
             <input wsam:Action="http://ws.station.binas.org/Station/getBinaRequest"
@@ -256,6 +320,26 @@
 
         <!-- main service operations -->
         <operation name="getInfo">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+        </operation>
+        
+        <operation name="getBalance">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+        </operation>
+        
+        <operation name="setBalance">
             <soap:operation soapAction="" />
             <input>
                 <soap:body use="literal" />

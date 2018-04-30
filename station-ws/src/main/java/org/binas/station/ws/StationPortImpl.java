@@ -45,6 +45,18 @@ public class StationPortImpl implements StationPortType {
 			return buildStationView(station);
 		}
 	}
+	
+	@Override
+	public BalanceInfo getBalance(String email) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setBalance(String email, double value, int tag) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	/** Return a bike to the station. */
 	@Override
