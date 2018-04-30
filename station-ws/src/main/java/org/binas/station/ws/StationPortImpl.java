@@ -47,7 +47,7 @@ public class StationPortImpl implements StationPortType {
 	}
 	
 	@Override
-	public BalanceInfo getBalance(String email) {
+	public BalanceView getBalance(String email) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -37,7 +37,7 @@
                 </xs:sequence>
             </xs:complexType>
             
-            <xs:complexType name="balanceInfo">
+            <xs:complexType name="balanceView">
                 <xs:sequence>
                     <xs:element name="value" type="xs:double" />
                     <xs:element name="tag" type="xs:int" />
@@ -66,7 +66,7 @@
 
             <xs:complexType name="getBalanceResponse">
                 <xs:sequence>
-                    <xs:element name="balanceInfo" type="tns:balanceInfo" />
+                    <xs:element name="balanceView" type="tns:balanceView" />
                 </xs:sequence>
             </xs:complexType>
             <xs:element name="getBalanceResponse" type="tns:getBalanceResponse" />
