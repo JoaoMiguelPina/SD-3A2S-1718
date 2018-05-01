@@ -1,34 +1,23 @@
 package org.binas.station.domain;
 
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class UserBalance {
 
-	private String _email;
-	private AtomicInteger _balance;
+	private double _value;
 	private int _tag;
 	
-	public UserBalance(String email, AtomicInteger balance, int tag) {
-		set_email(email);
-		set_balance(balance);
+	public UserBalance(double value, int tag) {
+		set_value(value);
 		set_tag(tag);
 	}
 
-	public AtomicInteger get_balance() {
-		return _balance;
+	public double get_value() {
+		return _value;
 	}
 
-	public void set_balance(AtomicInteger _balance) {
-		this._balance = _balance;
-	}
-
-	public String get_email() {
-		return _email;
-	}
-
-	public void set_email(String _email) {
-		this._email = _email;
+	public void set_value(double _value) {
+		this._value = _value;
 	}
 
 	public int get_tag() {

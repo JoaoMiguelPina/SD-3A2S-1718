@@ -4,6 +4,7 @@ import javax.jws.WebService;
 
 import org.binas.station.domain.Coordinates;
 import org.binas.station.domain.Station;
+import org.binas.station.domain.UserBalance;
 import org.binas.station.domain.exception.BadInitException;
 import org.binas.station.domain.exception.NoBinaAvailException;
 import org.binas.station.domain.exception.NoSlotAvailException;
@@ -13,7 +14,7 @@ import org.binas.station.domain.exception.NoSlotAvailException;
  * below "map" the Java class to the WSDL definitions.
  */
 @WebService(endpointInterface = "org.binas.station.ws.StationPortType",
-            wsdlLocation = "station.wsdl",
+            wsdlLocation = "station.2_0.wsdl",
             name ="StationWebService",
             portName = "StationPort",
             targetNamespace="http://ws.station.binas.org/",
@@ -48,14 +49,27 @@ public class StationPortImpl implements StationPortType {
 	
 	@Override
 	public BalanceView getBalance(String email) {
-		// TODO Auto-generated method stub
-		return null;
+		Station station = Station.getInstance();
+		BalanceView bv = new BalanceView();
+		bv.setTag(station.getUserBalance(email).get_tag());
+		bv.setValue(station.getUserBalance(email).get_value());
+		return bv;
 	}
 
 	@Override
 	public void setBalance(String email, double value, int tag) {
-		// TODO Auto-generated method stub
+		Station station = Station.getInstance();
 		
+		UserBalance ub = station.getUserBalance(email);
+		
+		if( ub != null) {
+			ub.set_tag(ub.get_tag() + 1);
+			ub.set_value(value);
+		}
+		else {
+			ub = new UserBalance(value, 1);
+			station.addUserBalance(email, ub);
+		}
 	}
 
 	/** Return a bike to the station. */
@@ -107,6 +121,7 @@ public class StationPortImpl implements StationPortType {
 	/** Return all station variables to default values. */
 	@Override
 	public void testClear() {
+		Station.getInstance().clearBalance();
 		Station.getInstance().reset();
 	}
 

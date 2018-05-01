@@ -1,6 +1,7 @@
 package org.binas.station.domain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.binas.station.domain.exception.BadInitException;
@@ -28,6 +29,9 @@ public class Station {
     private int maxCapacity;
 	/** Bonus for returning bike at this station. */
     private int bonus;
+    
+    
+    private HashMap<String, UserBalance> balances = new HashMap<String, UserBalance>();
 
 	/**
 	 * Global counter of Binas Gets. Uses lock-free thread-safe single variable.
@@ -40,7 +44,6 @@ public class Station {
     /** Global with current number of free docks. Uses lock-free thread-safe single variable. */
     private AtomicInteger freeDocks = new AtomicInteger(0);
 
-    private ArrayList<UserBalance> accounts = new ArrayList<UserBalance>();
     
     // Singleton -------------------------------------------------------------
 
@@ -139,9 +142,16 @@ public class Station {
     public synchronized int getAvailableBinas() {
     	return maxCapacity - freeDocks.get();
     }
-
-	public synchronized ArrayList<UserBalance> getAccounts() {
-		return accounts;
-	}
-    	
+   
+    public UserBalance getUserBalance(String email) {
+    	return balances.get(email);
+    }
+    
+    public void addUserBalance(String email, UserBalance ub) {
+    	balances.put(email, ub);
+    }
+    
+    public void clearBalance() {
+    	balances.clear();
+    }
 }
