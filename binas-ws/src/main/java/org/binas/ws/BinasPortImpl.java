@@ -162,10 +162,23 @@ public class BinasPortImpl implements BinasPortType {
 	@Override
 	public int getCredit(String email) throws UserNotExists_Exception {
 		try {
-			User user = BinasManager.getInstance().getUser(email);	
-			return user.getCredit();
-		} catch (UserNotFoundException e) {
-			throwUserNotExists("User not found: " + email);
+			int maxTag = 0;
+			int val = 0;
+			
+			Collection<String> stations = BinasManager.getInstance().getStations();
+			
+			for(String station : stations) {
+				StationClient stationCli = BinasManager.getInstance().getStation(station);
+				if(stationCli.getBalance(email).getTag() > maxTag) {
+					maxTag = stationCli.getBalance(email).getTag();
+					val = stationCli.getBalance(email).getValue();
+				}
+			}
+			return val;
+			
+		} catch (StationNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return 0;
 	}

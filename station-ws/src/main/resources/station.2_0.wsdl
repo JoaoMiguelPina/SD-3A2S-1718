@@ -39,7 +39,7 @@
             
             <xs:complexType name="balanceView">
                 <xs:sequence>
-                    <xs:element name="value" type="xs:double" />
+                    <xs:element name="value" type="xs:int" />
                     <xs:element name="tag" type="xs:int" />
                 </xs:sequence>
             </xs:complexType>
@@ -75,7 +75,7 @@
                 <xs:sequence>
                     <xs:element name="user_id" type="xs:string"
                         minOccurs="0" />
-                    <xs:element name="user_balance" type="xs:double"/>
+                    <xs:element name="user_balance" type="xs:int"/>
                     <xs:element name="tag" type="xs:int"/>
                 </xs:sequence>
             </xs:complexType>

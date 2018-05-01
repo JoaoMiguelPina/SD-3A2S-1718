@@ -60,7 +60,7 @@ public class StationPortImpl implements StationPortType {
 	}
 
 	@Override
-	public void setBalance(String email, double value, int tag) {
+	public void setBalance(String email, int value, int tag) {
 		Station station = Station.getInstance();
 		
 		UserBalance ub = station.getUserBalance(email);
