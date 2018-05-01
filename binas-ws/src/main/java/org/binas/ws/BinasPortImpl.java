@@ -63,7 +63,7 @@ public class BinasPortImpl implements BinasPortType {
 			for(String station : stations) {
 				StationClient stationCli = BinasManager.getInstance().getStation(station);
 				if(stationCli.getBalance(email) == null) {
-					stationCli.setBalance(email, 0, 1);
+					stationCli.setBalance(email, 10, 1);
 				}
 			}
 			
