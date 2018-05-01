@@ -1,5 +1,6 @@
 package org.binas.station.domain;
 
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.binas.station.domain.exception.BadInitException;
@@ -39,6 +40,8 @@ public class Station {
     /** Global with current number of free docks. Uses lock-free thread-safe single variable. */
     private AtomicInteger freeDocks = new AtomicInteger(0);
 
+    private ArrayList<UserBalance> accounts = new ArrayList<UserBalance>();
+    
     // Singleton -------------------------------------------------------------
 
  	/** Private constructor prevents instantiation from other classes. */
@@ -136,5 +139,9 @@ public class Station {
     public synchronized int getAvailableBinas() {
     	return maxCapacity - freeDocks.get();
     }
+
+	public synchronized ArrayList<UserBalance> getAccounts() {
+		return accounts;
+	}
     	
 }
