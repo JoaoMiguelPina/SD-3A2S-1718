@@ -365,6 +365,7 @@ public class BinasPortImpl implements BinasPortType {
 		throw new BadInit_Exception(message, faultInfo);
 	}
 
+	//
 	@Override
 	public Response<ListStationsResponse> listStationsAsync(Integer numberOfStations, CoordinatesView coordinates) {
 		// TODO Auto-generated method stub
@@ -434,7 +435,7 @@ public class BinasPortImpl implements BinasPortType {
 
 	@Override
 	public Future<?> returnBinaAsync(String stationId, String email, AsyncHandler<ReturnBinaResponse> asyncHandler) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
