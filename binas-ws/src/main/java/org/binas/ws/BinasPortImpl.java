@@ -6,11 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import javax.jws.WebService;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Response;
 
 import org.binas.domain.BinasManager;
 import org.binas.domain.StationsComparator;
@@ -363,128 +360,5 @@ public class BinasPortImpl implements BinasPortType {
 		BadInit faultInfo = new BadInit();
 		faultInfo.setMessage(message);
 		throw new BadInit_Exception(message, faultInfo);
-	}
-
-	@Override
-	public Response<ListStationsResponse> listStationsAsync(Integer numberOfStations, CoordinatesView coordinates) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Future<?> listStationsAsync(Integer numberOfStations, CoordinatesView coordinates,
-			AsyncHandler<ListStationsResponse> asyncHandler) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Response<GetInfoStationResponse> getInfoStationAsync(String stationId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Future<?> getInfoStationAsync(String stationId, AsyncHandler<GetInfoStationResponse> asyncHandler) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Response<GetCreditResponse> getCreditAsync(String email) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Future<?> getCreditAsync(String email, AsyncHandler<GetCreditResponse> asyncHandler) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Response<ActivateUserResponse> activateUserAsync(String email) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Future<?> activateUserAsync(String email, AsyncHandler<ActivateUserResponse> asyncHandler) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Response<RentBinaResponse> rentBinaAsync(String stationId, String email) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Future<?> rentBinaAsync(String stationId, String email, AsyncHandler<RentBinaResponse> asyncHandler) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Response<ReturnBinaResponse> returnBinaAsync(String stationId, String email) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Future<?> returnBinaAsync(String stationId, String email, AsyncHandler<ReturnBinaResponse> asyncHandler) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Response<TestPingResponse> testPingAsync(String inputMessage) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Future<?> testPingAsync(String inputMessage, AsyncHandler<TestPingResponse> asyncHandler) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Response<TestClearResponse> testClearAsync() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Future<?> testClearAsync(AsyncHandler<TestClearResponse> asyncHandler) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Response<TestInitStationResponse> testInitStationAsync(String stationId, int x, int y, int capacity,
-			int returnPrize) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Future<?> testInitStationAsync(String stationId, int x, int y, int capacity, int returnPrize,
-			AsyncHandler<TestInitStationResponse> asyncHandler) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Response<TestInitResponse> testInitAsync(int userInitialPoints) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Future<?> testInitAsync(int userInitialPoints, AsyncHandler<TestInitResponse> asyncHandler) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
