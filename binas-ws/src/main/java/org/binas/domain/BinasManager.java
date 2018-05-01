@@ -77,6 +77,15 @@ public class BinasManager {
 			StationClient stationCli = getStation(stationId);
 			stationCli.getBina();
 			
+			Collection<String> stations = getStations();
+			
+			for(String station : stations) {
+				StationClient stationClient = getStation(station);
+				if(stationClient.getBalance(email) == null) {
+					stationClient.setBalance(email, stationClient.getBalance(email).getValue() - 1, stationClient.getBalance(email).getTag() + 1);
+				}
+			}
+			
 			//apply rent action to user
 			user.effectiveRent();
 		}
