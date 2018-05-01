@@ -81,9 +81,7 @@ public class BinasManager {
 			
 			for(String station : stations) {
 				StationClient stationClient = getStation(station);
-				if(stationClient.getBalance(email) == null) {
-					stationClient.setBalance(email, stationClient.getBalance(email).getValue() - 1, stationClient.getBalance(email).getTag() + 1);
-				}
+				stationClient.setBalance(email, stationClient.getBalance(email).getValue() - 1, stationClient.getBalance(email).getTag() + 1);
 			}
 			
 			//apply rent action to user
@@ -100,6 +98,14 @@ public class BinasManager {
 			//validate station can rent
 			StationClient stationCli = getStation(stationId);
 			int prize = stationCli.returnBina();
+			
+			Collection<String> stations = getStations();
+			
+			for(String station : stations) {
+				StationClient stationClient = getStation(station);
+				stationClient.setBalance(email, stationClient.getBalance(email).getValue() + prize, stationClient.getBalance(email).getTag() + 1);
+		
+			}
 			
 			//apply rent action to user
 			user.effectiveReturn(prize);
