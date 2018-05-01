@@ -74,8 +74,7 @@ public class BinasPortImpl implements BinasPortType {
 		} catch (InvalidEmailException e) {
 			throwInvalidEmail("Invalid email: " + email);
 		} catch (StationNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Station not found.");
 		}
 		return null;
 	}

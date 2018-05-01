@@ -51,6 +51,9 @@ public class StationPortImpl implements StationPortType {
 	public BalanceView getBalance(String email) {
 		Station station = Station.getInstance();
 		BalanceView bv = new BalanceView();
+		if(station.getUserBalance(email) == null) {
+			return null;
+		}
 		bv.setTag(station.getUserBalance(email).get_tag());
 		bv.setValue(station.getUserBalance(email).get_value());
 		return bv;
