@@ -3,16 +3,27 @@ package org.binas.station.ws.cli;
 import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 
 import java.util.Map;
+import java.util.concurrent.Future;
 
+import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Response;
 
 import org.binas.station.ws.BadInit_Exception;
 import org.binas.station.ws.BalanceView;
+import org.binas.station.ws.GetBalanceResponse;
+import org.binas.station.ws.GetBinaResponse;
+import org.binas.station.ws.GetInfoResponse;
 import org.binas.station.ws.NoBinaAvail_Exception;
 import org.binas.station.ws.NoSlotAvail_Exception;
+import org.binas.station.ws.ReturnBinaResponse;
+import org.binas.station.ws.SetBalanceResponse;
 import org.binas.station.ws.StationPortType;
 import org.binas.station.ws.StationService;
 import org.binas.station.ws.StationView;
+import org.binas.station.ws.TestClearResponse;
+import org.binas.station.ws.TestInitResponse;
+import org.binas.station.ws.TestPingResponse;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 
@@ -148,6 +159,104 @@ public class StationClient implements StationPortType {
 	@Override
 	public void testInit(int x, int y, int capacity, int returnPrize) throws BadInit_Exception {
 		port.testInit(x, y, capacity, returnPrize);
+	}
+
+	@Override
+	public Response<GetInfoResponse> getInfoAsync() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Future<?> getInfoAsync(AsyncHandler<GetInfoResponse> asyncHandler) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response<GetBalanceResponse> getBalanceAsync(String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Future<?> getBalanceAsync(String userId, AsyncHandler<GetBalanceResponse> asyncHandler) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response<SetBalanceResponse> setBalanceAsync(String userId, int userBalance, int tag) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Future<?> setBalanceAsync(String userId, int userBalance, int tag,
+			AsyncHandler<SetBalanceResponse> asyncHandler) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response<GetBinaResponse> getBinaAsync() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Future<?> getBinaAsync(AsyncHandler<GetBinaResponse> asyncHandler) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response<ReturnBinaResponse> returnBinaAsync() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Future<?> returnBinaAsync(AsyncHandler<ReturnBinaResponse> asyncHandler) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response<TestPingResponse> testPingAsync(String inputMessage) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Future<?> testPingAsync(String inputMessage, AsyncHandler<TestPingResponse> asyncHandler) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response<TestClearResponse> testClearAsync() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Future<?> testClearAsync(AsyncHandler<TestClearResponse> asyncHandler) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response<TestInitResponse> testInitAsync(int x, int y, int capacity, int returnPrize) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Future<?> testInitAsync(int x, int y, int capacity, int returnPrize,
+			AsyncHandler<TestInitResponse> asyncHandler) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

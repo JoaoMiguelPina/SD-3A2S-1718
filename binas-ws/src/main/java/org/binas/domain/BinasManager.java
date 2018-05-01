@@ -40,6 +40,9 @@ public class BinasManager {
 	 */
 	private String stationTemplateName = null;
 
+	private int nStations = 3;
+	
+	private int quorum = 2;
 	// Singleton -------------------------------------------------------------
 
 	private BinasManager() {
@@ -79,8 +82,8 @@ public class BinasManager {
 			
 			Collection<String> stations = getStations();
 			
-			for(String station : stations) {
-				StationClient stationClient = getStation(station);
+			for(int i = 1; i <= this.nStations; i++) {
+				StationClient stationClient = getStation("A46_Station"+i);
 				stationClient.setBalance(email, stationClient.getBalance(email).getValue() - 1, stationClient.getBalance(email).getTag() + 1);
 			}
 			
@@ -211,5 +214,18 @@ public class BinasManager {
 			throw new BadInitException(e.getMessage());
 		}
 		
+	}
+
+	public int getNStations() {
+		return nStations;
+	}
+
+	public void setNStations(int nStations) {
+		this.nStations = nStations;
+		updateQuorum(nStations);
+	}
+	
+	public void updateQuorum(int nStations) {
+		this.quorum = nStations/2 + 1;
 	}
 }
