@@ -56,7 +56,7 @@ public class StationPortImpl implements StationPortType {
 		}
 		bv.setTag(station.getUserBalance(email).get_tag());
 		bv.setValue(station.getUserBalance(email).get_value());
-		System.out.println("SetBalance no user: " + email);
+		System.out.println("GetBalance no user: " + email);
 		return bv;
 		
 	}

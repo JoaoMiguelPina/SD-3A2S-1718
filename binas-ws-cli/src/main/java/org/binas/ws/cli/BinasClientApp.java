@@ -53,6 +53,15 @@ public class BinasClientApp {
         String result = client.testPing("client");
         System.out.print(result);
         
+        System.out.println("Invoke ActivateUser()...");
+        
+        client.activateUser("email@valido");
+        System.out.println("...activateUser done...");
+        System.out.println("...Invoke getCredit()...");
+		int credit = client.getCredit("email@valido");
+		System.out.println("...getCredit: "+ credit + "...");
+        
+        
 	 }
 }
 

@@ -8,6 +8,7 @@ import java.util.concurrent.Future;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Response;
+import javax.xml.ws.WebServiceException;
 
 import org.binas.station.ws.BadInit_Exception;
 import org.binas.station.ws.BalanceView;
@@ -121,7 +122,12 @@ public class StationClient implements StationPortType {
 
 	@Override
 	public StationView getInfo() {
-		return port.getInfo();
+		try {
+			return port.getInfo();
+		}catch(WebServiceException e) {
+			//ignore
+		}
+		return null;
 	}
 	
 	@Override
@@ -176,7 +182,7 @@ public class StationClient implements StationPortType {
 	@Override
 	public Response<GetBalanceResponse> getBalanceAsync(String userId) {
 		Response<GetBalanceResponse> response = port.getBalanceAsync(userId);
-		//System.out.println("GetBalanceAsync no user: " + userId);
+		System.out.println("GetBalanceAsync no user: " + userId);
 		return response;
 	}
 
@@ -189,7 +195,7 @@ public class StationClient implements StationPortType {
 	@Override
 	public Response<SetBalanceResponse> setBalanceAsync(String userId, int userBalance, int tag) {
 		Response<SetBalanceResponse> response = port.setBalanceAsync(userId, userBalance, tag);
-		//System.out.println("SetBalanceAsync no user: " + userId);
+		System.out.println("SetBalanceAsync no user: " + userId);
 		return response;
 	}
 
