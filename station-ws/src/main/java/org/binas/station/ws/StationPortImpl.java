@@ -56,7 +56,9 @@ public class StationPortImpl implements StationPortType {
 		}
 		bv.setTag(station.getUserBalance(email).get_tag());
 		bv.setValue(station.getUserBalance(email).get_value());
+		System.out.println("SetBalance no user: " + email);
 		return bv;
+		
 	}
 
 	@Override
@@ -73,6 +75,7 @@ public class StationPortImpl implements StationPortType {
 			ub = new UserBalance(value, 1);
 			station.addUserBalance(email, ub);
 		}
+		System.out.println("SetBalance no user: " + email);
 	}
 
 	/** Return a bike to the station. */

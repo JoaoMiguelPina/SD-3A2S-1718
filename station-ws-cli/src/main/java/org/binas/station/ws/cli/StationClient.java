@@ -176,6 +176,7 @@ public class StationClient implements StationPortType {
 	@Override
 	public Response<GetBalanceResponse> getBalanceAsync(String userId) {
 		Response<GetBalanceResponse> response = port.getBalanceAsync(userId);
+		//System.out.println("GetBalanceAsync no user: " + userId);
 		return response;
 	}
 
@@ -188,6 +189,7 @@ public class StationClient implements StationPortType {
 	@Override
 	public Response<SetBalanceResponse> setBalanceAsync(String userId, int userBalance, int tag) {
 		Response<SetBalanceResponse> response = port.setBalanceAsync(userId, userBalance, tag);
+		//System.out.println("SetBalanceAsync no user: " + userId);
 		return response;
 	}
 

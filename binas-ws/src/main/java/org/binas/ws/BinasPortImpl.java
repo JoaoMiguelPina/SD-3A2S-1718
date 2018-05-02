@@ -155,10 +155,6 @@ public class BinasPortImpl implements BinasPortType {
 			throwInvalidStation("Station not found: " + stationId);
 		}
 	}
-
-	public void getBalance(String email) {
-		
-	}
 	
 	@Override
 	public int getCredit(String email) throws UserNotExists_Exception {
