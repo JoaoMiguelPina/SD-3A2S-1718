@@ -85,6 +85,9 @@ public class BinasManager {
 		synchronized (user) {
 			//validate user can rent
 			user.validateCanRentBina();
+			
+			StationClient stationCli = getStation(stationId);
+			stationCli.getBina();
 
 			writeBalance(email, -1);
 			
