@@ -167,7 +167,7 @@ public class BinasPortImpl implements BinasPortType {
 	@Override
 	public int getCredit(String email) throws UserNotExists_Exception {
 		try {
-			return BinasManager.getInstance().readBalance(email).getValue();
+			return BinasManager.getInstance().read(email).getValue();
 		} catch (StationNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

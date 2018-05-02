@@ -89,7 +89,7 @@ public class BinasManager {
 			StationClient stationCli = getStation(stationId);
 			stationCli.getBina();
 
-			writeBalance(email, -1);
+			write(email, -1);
 			
 			//apply rent action to user
 			user.effectiveRent();
@@ -106,7 +106,7 @@ public class BinasManager {
 			StationClient stationCli = getStation(stationId);
 			int prize = stationCli.returnBina();
 			
-			writeBalance(email, prize);
+			write(email, prize);
 			
 			//apply rent action to user
 			user.effectiveReturn(prize);
@@ -231,7 +231,7 @@ public class BinasManager {
 		return quorum;
 	}
 	
-	public synchronized BalanceView readBalance(String email) throws  StationNotFoundException {
+	public synchronized BalanceView read(String email) throws  StationNotFoundException {
 		
 		int received = 0;
 		List<Response<GetBalanceResponse>> responses = new ArrayList<Response<GetBalanceResponse>>();
@@ -274,8 +274,8 @@ public class BinasManager {
 		return bv;
 	}
 	
-	public synchronized void writeBalance(String email, int value) throws StationNotFoundException {
-		BalanceView bv = readBalance(email);
+	public synchronized void write(String email, int value) throws StationNotFoundException {
+		BalanceView bv = read(email);
 		int newTag = bv.getTag() + 1;
 		int received = 0;
 		List<Response<SetBalanceResponse>> responses = new ArrayList<Response<SetBalanceResponse>>();
