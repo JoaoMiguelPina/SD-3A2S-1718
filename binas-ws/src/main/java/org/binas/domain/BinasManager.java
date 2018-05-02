@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.xml.ws.Response;
+import javax.xml.ws.WebServiceException;
 
 import org.binas.domain.exception.BadInitException;
 import org.binas.domain.exception.InsufficientCreditsException;
@@ -43,7 +44,7 @@ public class BinasManager {
 	/**
 	 * Station name
 	 */
-	private String stationTemplateName = null;
+	private String stationTemplateName = "A46_Station";
 
 	private int nStations = 3;
 	
@@ -82,7 +83,7 @@ public class BinasManager {
 			//validate user can rent
 			user.validateCanRentBina();
 			
-			StationClient stationCli = getStation(stationId);
+			StationClient stationCli = getStation(stationId);	
 			stationCli.getBina();
 
 			write(email, -1);
@@ -118,12 +119,15 @@ public class BinasManager {
 			try {
 				StationClient sc = new StationClient(uddiUrl, s);
 				org.binas.station.ws.StationView sv = sc.getInfo();
+				if(sv == null)
+					return null;
 				String idToCompare = sv.getId();
 				if (idToCompare.equals(stationId)) {
 					return sc;
 				}
 			} catch (StationClientException e) {
 				continue;
+			
 			}
 		}
 		
@@ -177,6 +181,7 @@ public class BinasManager {
 
 	public void reset() {
 		UsersManager.getInstance().reset();
+		
 	}
 
 	public void init(int userInitialPoints) throws BadInitException {
@@ -237,6 +242,8 @@ public class BinasManager {
 		
 		for(int i = 1; i <= this.nStations; i++) {	
 			StationClient stationCli = getStation("A46_Station"+i);
+			if (stationCli == null)
+				continue;
 			responses.add(stationCli.getBalanceAsync(email));	
 		}
 		
@@ -278,6 +285,8 @@ public class BinasManager {
 		
 		for(int i = 1; i <= this.nStations; i++) {	
 			StationClient stationCli = getStation("A46_Station"+i);
+			if (stationCli == null)
+				continue;
 			responses.add(stationCli.setBalanceAsync(email, bv.getValue() + value, newTag));	
 		}
 		
