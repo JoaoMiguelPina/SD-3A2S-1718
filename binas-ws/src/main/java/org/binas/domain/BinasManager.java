@@ -2,10 +2,8 @@ package org.binas.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.regex.Pattern;
 
 import javax.xml.ws.Response;
 
@@ -25,8 +23,6 @@ import org.binas.station.ws.NoSlotAvail_Exception;
 import org.binas.station.ws.SetBalanceResponse;
 import org.binas.station.ws.cli.StationClient;
 import org.binas.station.ws.cli.StationClientException;
-import org.binas.ws.StationView;
-import org.binas.ws.UserNotExists_Exception;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINamingException;

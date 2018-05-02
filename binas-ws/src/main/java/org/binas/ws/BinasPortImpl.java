@@ -1,19 +1,15 @@
 package org.binas.ws;
 
-import java.io.IOException;
-import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import javax.jws.WebService;
-import javax.xml.ws.Response;
 
 import org.binas.domain.BinasManager;
 import org.binas.domain.StationsComparator;
 import org.binas.domain.User;
-import org.binas.domain.UsersManager;
 import org.binas.domain.exception.BadInitException;
 import org.binas.domain.exception.InsufficientCreditsException;
 import org.binas.domain.exception.InvalidEmailException;

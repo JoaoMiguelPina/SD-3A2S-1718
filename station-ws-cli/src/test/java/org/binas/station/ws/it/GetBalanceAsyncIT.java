@@ -7,9 +7,7 @@ import java.util.concurrent.ExecutionException;
 import javax.xml.ws.Response;
 
 import org.binas.station.ws.BadInit_Exception;
-import org.binas.station.ws.BalanceView;
 import org.binas.station.ws.GetBalanceResponse;
-import org.binas.station.ws.SetBalanceResponse;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
