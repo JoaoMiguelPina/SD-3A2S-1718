@@ -86,12 +86,8 @@ public class BinasManager {
 			//validate user can rent
 			user.validateCanRentBina();
 
-			try {
-				writeBalance(email, -1);
-			} catch (UserNotExists_Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			writeBalance(email, -1);
+			
 			//apply rent action to user
 			user.effectiveRent();
 		}
@@ -107,12 +103,8 @@ public class BinasManager {
 			StationClient stationCli = getStation(stationId);
 			int prize = stationCli.returnBina();
 			
-			try {
-				writeBalance(email, prize);
-			} catch (UserNotExists_Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			writeBalance(email, prize);
+			
 			//apply rent action to user
 			user.effectiveReturn(prize);
 		}		
@@ -236,7 +228,7 @@ public class BinasManager {
 		return quorum;
 	}
 	
-	public synchronized BalanceView readBalance(String email) throws UserNotExists_Exception, StationNotFoundException {
+	public synchronized BalanceView readBalance(String email) throws  StationNotFoundException {
 		
 		int received = 0;
 		List<Response<GetBalanceResponse>> responses = new ArrayList<Response<GetBalanceResponse>>();
@@ -252,7 +244,7 @@ public class BinasManager {
 		while(received < this.quorum) {
 			for(Response<GetBalanceResponse> response : responses) {
 				if(response.isDone()) {
-					received++;
+					
 					try {
 						if(response.get().getBalanceView() != null) {
 							if(response.get().getBalanceView().getTag() > bv.getTag()) {
@@ -266,10 +258,11 @@ public class BinasManager {
 					} 
 					catch (ExecutionException e) {
 						responses.remove(response);
-						break;
+						continue;
 					}
 					
 					responses.remove(response);	
+					received++;
 					break;
 				}
 		
@@ -278,7 +271,7 @@ public class BinasManager {
 		return bv;
 	}
 	
-	public synchronized void writeBalance(String email, int value) throws UserNotExists_Exception, StationNotFoundException {
+	public synchronized void writeBalance(String email, int value) throws StationNotFoundException {
 		BalanceView bv = readBalance(email);
 		int newTag = bv.getTag() + 1;
 		int received = 0;
