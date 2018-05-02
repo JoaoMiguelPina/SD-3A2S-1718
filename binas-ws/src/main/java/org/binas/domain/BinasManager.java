@@ -2,7 +2,12 @@ package org.binas.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
+
+import javax.xml.ws.Response;
 
 import org.binas.domain.exception.BadInitException;
 import org.binas.domain.exception.InsufficientCreditsException;
@@ -13,11 +18,13 @@ import org.binas.domain.exception.UserAlreadyHasBinaException;
 import org.binas.domain.exception.UserHasNoBinaException;
 import org.binas.domain.exception.UserNotFoundException;
 import org.binas.station.ws.BadInit_Exception;
+import org.binas.station.ws.GetBalanceResponse;
 import org.binas.station.ws.NoBinaAvail_Exception;
 import org.binas.station.ws.NoSlotAvail_Exception;
 import org.binas.station.ws.cli.StationClient;
 import org.binas.station.ws.cli.StationClientException;
 import org.binas.ws.StationView;
+import org.binas.ws.UserNotExists_Exception;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINamingException;
@@ -43,6 +50,7 @@ public class BinasManager {
 	private int nStations = 3;
 	
 	private int quorum = 2;
+	
 	// Singleton -------------------------------------------------------------
 
 	private BinasManager() {
@@ -228,6 +236,48 @@ public class BinasManager {
 
 	public int getQuorum() {
 		return quorum;
+	}
+	
+	public synchronized int readBalance(String email) throws UserNotExists_Exception, StationNotFoundException {
+		
+		int maxTag = 0;
+		int maxVal = 0;
+		int received = 0;
+		List<Response<GetBalanceResponse>> responses = new ArrayList<Response<GetBalanceResponse>>();
+		
+		for(int i = 1; i <= this.nStations; i++) {	
+			StationClient stationCli = getStation("A46_Station"+i);
+			responses.add(stationCli.getBalanceAsync(email));	
+		}
+		
+		while(received < this.quorum) {
+			System.out.println(responses.size());
+			for(Response<GetBalanceResponse> response : responses) {
+				if(response.isDone()) {
+					received++;
+					try {
+						if(response.get().getBalanceView() != null) {
+							if(response.get().getBalanceView().getTag() > maxTag) {
+								maxTag = response.get().getBalanceView().getTag();
+								maxVal = response.get().getBalanceView().getValue();
+							}
+						}
+					}
+					catch (InterruptedException e) {
+						continue;
+					} 
+					catch (ExecutionException e) {
+						responses.remove(response);
+						break;
+					}
+					
+					responses.remove(response);	
+					break;
+				}
+		
+			}
+		}
+		return maxVal;
 	}
 
 }
