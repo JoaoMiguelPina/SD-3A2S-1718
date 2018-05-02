@@ -7,7 +7,9 @@ import java.util.concurrent.ExecutionException;
 import javax.xml.ws.Response;
 
 import org.binas.station.ws.BadInit_Exception;
+import org.binas.station.ws.BalanceView;
 import org.binas.station.ws.GetBalanceResponse;
+import org.binas.station.ws.SetBalanceResponse;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -19,6 +21,9 @@ public class GetBalanceAsyncIT extends BaseIT{
 	private final static int Y = 5;
 	private final static int CAPACITY = 20;
 	private final static int RETURN_PRIZE = 0;
+	private final static int tag = 1;
+	private final static int value = 2;
+	private final static String email = "email@valido";
 	
 	// one-time initialization and clean-up
 	@BeforeClass
@@ -36,7 +41,7 @@ public class GetBalanceAsyncIT extends BaseIT{
 	public void setUp() throws BadInit_Exception {
 		client.testClear();
 		client.testInit(X, Y, CAPACITY, RETURN_PRIZE);
-		client.setBalanceAsync("email@valido", 2, 1);
+		client.setBalance(email, value, tag);
 	}
 
 	@After
@@ -47,11 +52,13 @@ public class GetBalanceAsyncIT extends BaseIT{
 
 	@Test
 	public void success() throws InterruptedException, ExecutionException{
-		Response<GetBalanceResponse> response = client.getBalanceAsync("email@valido");
-		int tag = response.get().getBalanceView().getTag();
-		int value = response.get().getBalanceView().getValue();
-		assertEquals(1, tag);
-		assertEquals(2, value);
+		
+	
+		Response<GetBalanceResponse> response = client.getBalanceAsync(email);
+		int tagOut = response.get().getBalanceView().getTag();
+		int valueOut = response.get().getBalanceView().getValue();
+		assertEquals(tag, tagOut);
+		assertEquals(value, valueOut);
 	}
 
 
