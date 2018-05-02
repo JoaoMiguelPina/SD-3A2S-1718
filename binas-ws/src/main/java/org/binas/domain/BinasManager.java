@@ -18,9 +18,11 @@ import org.binas.domain.exception.UserAlreadyHasBinaException;
 import org.binas.domain.exception.UserHasNoBinaException;
 import org.binas.domain.exception.UserNotFoundException;
 import org.binas.station.ws.BadInit_Exception;
+import org.binas.station.ws.BalanceView;
 import org.binas.station.ws.GetBalanceResponse;
 import org.binas.station.ws.NoBinaAvail_Exception;
 import org.binas.station.ws.NoSlotAvail_Exception;
+import org.binas.station.ws.SetBalanceResponse;
 import org.binas.station.ws.cli.StationClient;
 import org.binas.station.ws.cli.StationClientException;
 import org.binas.ws.StationView;
@@ -84,15 +86,12 @@ public class BinasManager {
 			//validate user can rent
 			user.validateCanRentBina();
 
-			//validate station can rent
-			StationClient stationCli = getStation(stationId);
-			stationCli.getBina();
-			
-			for(int i = 1; i <= this.nStations; i++) {
-				StationClient stationClient = getStation("A46_Station"+i);
-				stationClient.setBalance(email, stationClient.getBalance(email).getValue() - 1, stationClient.getBalance(email).getTag() + 1);
+			try {
+				writeBalance(email, -1);
+			} catch (UserNotExists_Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
 			//apply rent action to user
 			user.effectiveRent();
 		}
@@ -108,13 +107,12 @@ public class BinasManager {
 			StationClient stationCli = getStation(stationId);
 			int prize = stationCli.returnBina();
 			
-			
-			for(int i = 1; i <= this.nStations; i++) {
-				StationClient stationClient = getStation("A46_Station"+i);
-				stationClient.setBalance(email, stationClient.getBalance(email).getValue() + prize, stationClient.getBalance(email).getTag() + 1);
-		
+			try {
+				writeBalance(email, prize);
+			} catch (UserNotExists_Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
 			//apply rent action to user
 			user.effectiveReturn(prize);
 		}		
@@ -238,12 +236,13 @@ public class BinasManager {
 		return quorum;
 	}
 	
-	public synchronized int readBalance(String email) throws UserNotExists_Exception, StationNotFoundException {
+	public synchronized BalanceView readBalance(String email) throws UserNotExists_Exception, StationNotFoundException {
 		
-		int maxTag = 0;
-		int maxVal = 0;
 		int received = 0;
 		List<Response<GetBalanceResponse>> responses = new ArrayList<Response<GetBalanceResponse>>();
+		BalanceView bv = new BalanceView();
+		bv.setTag(0);
+		bv.setValue(0);
 		
 		for(int i = 1; i <= this.nStations; i++) {	
 			StationClient stationCli = getStation("A46_Station"+i);
@@ -251,15 +250,14 @@ public class BinasManager {
 		}
 		
 		while(received < this.quorum) {
-			System.out.println(responses.size());
 			for(Response<GetBalanceResponse> response : responses) {
 				if(response.isDone()) {
 					received++;
 					try {
 						if(response.get().getBalanceView() != null) {
-							if(response.get().getBalanceView().getTag() > maxTag) {
-								maxTag = response.get().getBalanceView().getTag();
-								maxVal = response.get().getBalanceView().getValue();
+							if(response.get().getBalanceView().getTag() > bv.getTag()) {
+								bv.setTag(response.get().getBalanceView().getTag());
+								bv.setValue(response.get().getBalanceView().getValue());
 							}
 						}
 					}
@@ -277,7 +275,30 @@ public class BinasManager {
 		
 			}
 		}
-		return maxVal;
+		return bv;
+	}
+	
+	public synchronized void writeBalance(String email, int value) throws UserNotExists_Exception, StationNotFoundException {
+		BalanceView bv = readBalance(email);
+		int newTag = bv.getTag() + 1;
+		int received = 0;
+		List<Response<SetBalanceResponse>> responses = new ArrayList<Response<SetBalanceResponse>>();
+		
+		for(int i = 1; i <= this.nStations; i++) {	
+			StationClient stationCli = getStation("A46_Station"+i);
+			responses.add(stationCli.setBalanceAsync(email, bv.getValue() + value, newTag));	
+		}
+		
+		while(received < this.quorum) {
+			for(Response<SetBalanceResponse> response : responses) {
+				if(response.isDone()) {
+					received++;
+					responses.remove(response);	
+					break;
+				}
+		
+			}
+		}
 	}
 
 }
