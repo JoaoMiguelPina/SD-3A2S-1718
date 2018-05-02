@@ -175,8 +175,8 @@ public class StationClient implements StationPortType {
 
 	@Override
 	public Response<GetBalanceResponse> getBalanceAsync(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		Response<GetBalanceResponse> response = port.getBalanceAsync(userId);
+		return response;
 	}
 
 	@Override
@@ -187,8 +187,8 @@ public class StationClient implements StationPortType {
 
 	@Override
 	public Response<SetBalanceResponse> setBalanceAsync(String userId, int userBalance, int tag) {
-		// TODO Auto-generated method stub
-		return null;
+		Response<SetBalanceResponse> response = port.setBalanceAsync(userId, userBalance, tag);
+		return response;
 	}
 
 	@Override

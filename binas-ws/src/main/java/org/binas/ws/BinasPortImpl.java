@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.jws.WebService;
+import javax.xml.ws.Response;
 
 import org.binas.domain.BinasManager;
 import org.binas.domain.StationsComparator;
@@ -159,16 +160,21 @@ public class BinasPortImpl implements BinasPortType {
 		}
 	}
 
+	public void getBalance(String email) {
+		
+	}
+	
 	@Override
 	public int getCredit(String email) throws UserNotExists_Exception {
 		try {
 			int maxTag = 0;
 			int val = 0;
+			int nStations = BinasManager.getInstance().getNStations();
 			
-			Collection<String> stations = BinasManager.getInstance().getStations();
-			
-			for(String station : stations) {
-				StationClient stationCli = BinasManager.getInstance().getStation(station);
+			for(int i = 1; i <= nStations; i++) {
+				
+	
+				StationClient stationCli = BinasManager.getInstance().getStation("A46_Station"+i);
 				if(stationCli.getBalance(email).getTag() > maxTag) {
 					maxTag = stationCli.getBalance(email).getTag();
 					val = stationCli.getBalance(email).getValue();

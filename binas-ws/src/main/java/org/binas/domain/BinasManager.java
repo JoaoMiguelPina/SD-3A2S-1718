@@ -80,8 +80,6 @@ public class BinasManager {
 			StationClient stationCli = getStation(stationId);
 			stationCli.getBina();
 			
-			Collection<String> stations = getStations();
-			
 			for(int i = 1; i <= this.nStations; i++) {
 				StationClient stationClient = getStation("A46_Station"+i);
 				stationClient.setBalance(email, stationClient.getBalance(email).getValue() - 1, stationClient.getBalance(email).getTag() + 1);
@@ -102,10 +100,9 @@ public class BinasManager {
 			StationClient stationCli = getStation(stationId);
 			int prize = stationCli.returnBina();
 			
-			Collection<String> stations = getStations();
 			
-			for(String station : stations) {
-				StationClient stationClient = getStation(station);
+			for(int i = 1; i <= this.nStations; i++) {
+				StationClient stationClient = getStation("A46_Station"+i);
 				stationClient.setBalance(email, stationClient.getBalance(email).getValue() + prize, stationClient.getBalance(email).getTag() + 1);
 		
 			}
@@ -228,4 +225,9 @@ public class BinasManager {
 	public void updateQuorum(int nStations) {
 		this.quorum = nStations/2 + 1;
 	}
+
+	public int getQuorum() {
+		return quorum;
+	}
+
 }
