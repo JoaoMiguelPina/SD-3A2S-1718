@@ -12,9 +12,13 @@ import org.binas.station.domain.exception.NoSlotAvailException;
  * This class implements the Web Service port type (interface). The annotations
  * below "map" the Java class to the WSDL definitions.
  */
-// TODO
-@WebService(endpointInterface = "org.binas.station.ws.StationPortType", wsdlLocation = "station.1_0.wsdl", name = "StationWebService", portName = "StationPort", targetNamespace = "http://ws.station.binas.org/", serviceName = "StationService")
-
+@WebService(endpointInterface = "org.binas.station.ws.StationPortType",
+            wsdlLocation = "station.wsdl",
+            name ="StationWebService",
+            portName = "StationPort",
+            targetNamespace="http://ws.station.binas.org/",
+            serviceName = "StationService"
+)
 public class StationPortImpl implements StationPortType {
 
 	/**
@@ -27,54 +31,45 @@ public class StationPortImpl implements StationPortType {
 	public StationPortImpl(StationEndpointManager endpointManager) {
 		this.endpointManager = endpointManager;
 	}
-
+	
 	// Main operations -------------------------------------------------------
-
+	
 	/** Retrieve information about station. */
 	@Override
 	public StationView getInfo() {
-		Station s = Station.getInstance();
-		StationView sv = new StationView();
-
-		CoordinatesView coord = new CoordinatesView();
-		coord.setX(s.getCoordinates().getX());
-		coord.setY(s.getCoordinates().getY());
-
-		sv.setAvailableBinas(s.getAvailableBinas());
-		sv.setCapacity(s.getMaxCapacity());
-		sv.setCoordinate(coord);
-		sv.setFreeDocks(s.getFreeDocks());
-		sv.setId(s.getId());
-		sv.setTotalGets(s.getTotalGets());
-		sv.setTotalReturns(s.getTotalReturns());
-
-		return sv;
+		// Access the domain root where the station master data is stored.
+		Station station = Station.getInstance();
+		// Create a view (copy) to store the station data in the response.
+		// Acquire station object lock to perform all gets together.
+		synchronized(station) {
+			return buildStationView(station);
+		}
 	}
 
 	/** Return a bike to the station. */
 	@Override
 	public int returnBina() throws NoSlotAvail_Exception {
-		Station s = Station.getInstance();
+		Station station = Station.getInstance();
+		int bonus = 0;
 		try {
-			return s.returnBina();
-		} catch (NoSlotAvailException e) {
-			System.out.println("There is no slot available at the station.");
-			e.printStackTrace();
+			bonus = station.returnBina();
+		} catch(NoSlotAvailException e) {
+			throwNoSlotAvail("No slot available at this station!");
 		}
-		return -1;
+		return bonus;
 	}
 
 	/** Take a bike from the station. */
 	@Override
 	public void getBina() throws NoBinaAvail_Exception {
-		Station s = Station.getInstance();
+		Station station = Station.getInstance();
 		try {
-			s.getBina();
+			station.getBina();
 		} catch (NoBinaAvailException e) {
-			System.out.println("There is no bina available at the station.");
-			e.printStackTrace();
+			throwNoBinaAvail("No Bina available at this station!");
 		}
 	}
+
 
 	// Test Control operations -----------------------------------------------
 
@@ -135,7 +130,7 @@ public class StationPortImpl implements StationPortType {
 		view.setY(coordinates.getY());
 		return view;
 	}
-
+	
 	// Exception helpers -----------------------------------------------------
 
 	/** Helper to throw a new NoBinaAvail exception. */
@@ -144,7 +139,7 @@ public class StationPortImpl implements StationPortType {
 		faultInfo.message = message;
 		throw new NoBinaAvail_Exception(message, faultInfo);
 	}
-
+	
 	/** Helper to throw a new NoSlotAvail exception. */
 	private void throwNoSlotAvail(final String message) throws NoSlotAvail_Exception {
 		NoSlotAvail faultInfo = new NoSlotAvail();

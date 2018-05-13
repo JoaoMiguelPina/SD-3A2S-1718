@@ -1,12 +1,46 @@
-# Projeto de Sistemas Distribuídos 2017/18 #
+# Binas
+Distributed Systems 2017-2018 project
 
-Grupo A46
+## Instructions
+1- Start a local jUDDI server ([instructions](http://disciplinas.tecnico.ulisboa.pt/leic-sod/2017-2018/labs/software/index.html))
+(or set the properties for a remote jUDDI server)
 
-83473 Hélio Domingos helio.domingos@tecnico.ulisboa.pt
+Make sure that the uddi-naming library is installed.
 
-83530 Miguel Regouga miguelregouga@tecnico.ulisboa.pt
+2- Start a Station Web Service
+```
+cd station-ws
+mvn clean compile exec:java
+```
+You can start additional servers by setting the _i_ and _coordinates_ properties: 
+```
+mvn exec:java -Dws.i=2 -Dstation.coords.x=80 -Dstation.coords.y=20
+mvn exec:java -Dws.i=3 -Dstation.coords.x=50 -Dstation.coords.y=50
+```
 
-85080 João Pina joaomfpina@tecnico.ulisboa.pt
+3- Install the Station Client in your local Maven Repository and run it
+```
+cd station-ws-cli
+mvn clean install exec:java
+```
+The integration tests will run in the _verify_ phase, before the _install_ phase.
 
--------------------------------------------------------------------------------
-**FIM**
+4- Start the Binas Web Service
+```
+cd binas-ws
+mvn clean compile exec:java
+```
+
+5- Run Binas Client
+```
+cd binas-ws-cli
+mvn clean compile exec:java
+```
+The client should call a test operation and print the result.
+
+6- Run Binas Client integration tests
+```
+mvn verify
+```
+The test results will be displayed.
+Individual integration tests can be run as explained [here](http://maven.apache.org/surefire/maven-failsafe-plugin/examples/single-test.html).

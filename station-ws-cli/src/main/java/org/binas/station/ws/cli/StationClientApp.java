@@ -1,6 +1,10 @@
 package org.binas.station.ws.cli;
 
-/** Client application. */
+/** 
+ * Client application. 
+ * 
+ * Looks for Stations using UDDI and arguments provided in pom.xml
+ */
 public class StationClientApp {
 
 	public static void main(String[] args) throws Exception {
@@ -19,8 +23,6 @@ public class StationClientApp {
 			uddiURL = args[0];
 			wsName = args[1];
 		}
-
-		System.out.println(StationClientApp.class.getSimpleName() + " running");
 
 		// Create client.
 		StationClient client = null;

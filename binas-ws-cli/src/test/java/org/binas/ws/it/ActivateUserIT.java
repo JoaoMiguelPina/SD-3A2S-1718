@@ -1,79 +1,114 @@
 package org.binas.ws.it;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-import org.binas.ws.BadInit_Exception;
-import org.binas.ws.EmailExists_Exception;
-import org.binas.ws.InvalidEmail_Exception;
-import org.binas.ws.InvalidStation_Exception;
-import org.binas.ws.StationView;
-import org.binas.ws.UserView;
-import org.junit.After;
-import org.junit.Test;
+import org.binas.ws.*;
+import org.junit.*;
 
-import junit.framework.Assert;
+/*
+ * Class tests if the user creation has succeeded or not
+ */
+public class ActivateUserIT extends BaseIT  {
+	private static final int USER_POINTS = 10;
 
-public class ActivateUserIT extends BaseIT {
-	@Test
-	public void success() throws BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, InvalidEmail_Exception {
-		UserView userView = client.activateUser("regouga@regouga");
-		Assert.assertEquals("regouga@regouga", userView.getEmail());
+	// one-time initialization and clean-up
+	@BeforeClass
+	public static void oneTimeSetUp() {
 	}
-	
-	@Test(expected = InvalidEmail_Exception.class)
-	public void invalidEmail1() throws BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, InvalidEmail_Exception {
-		UserView userView = client.activateUser("teste.@teste");
+
+	@AfterClass
+	public static void oneTimeTearDown() {
 	}
-	
-	@Test(expected = InvalidEmail_Exception.class)
-	public void invalidEmail2() throws BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, InvalidEmail_Exception {
-		UserView userView = client.activateUser("teste@teste.");
+
+	// members
+
+	// initialization and clean-up for each test
+	@Before
+	public void setUp() throws BadInit_Exception {
+		binasTestClear();
+		client.testInit(USER_POINTS);
 	}
-	
-	@Test(expected = InvalidEmail_Exception.class)
-	public void invalidEmail3() throws BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, InvalidEmail_Exception {
-		UserView userView = client.activateUser("@teste");
-	}
-	
-	@Test(expected = InvalidEmail_Exception.class)
-	public void invalidEmail4() throws BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, InvalidEmail_Exception {
-		UserView userView = client.activateUser("teste@");
-	}
-	
-	@Test(expected = InvalidEmail_Exception.class)
-	public void invalidEmail5() throws BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, InvalidEmail_Exception {
-		UserView userView = client.activateUser("@");
-	}
-	
-	@Test(expected = InvalidEmail_Exception.class)
-	public void invalidEmail6() throws BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, InvalidEmail_Exception {
-		UserView userView = client.activateUser("teste.@teste.");
-	}
-	
-	@Test(expected = InvalidEmail_Exception.class)
-	public void invalidEmail7() throws BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, InvalidEmail_Exception {
-		UserView userView = client.activateUser("teste.teste.@teste");
-	}
-	
-	@Test(expected = InvalidEmail_Exception.class)
-	public void invalidEmail8() throws BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, InvalidEmail_Exception {
-		UserView userView = client.activateUser("teste@teste.teste.");
-	}
-	
-	@Test(expected = InvalidEmail_Exception.class)
-	public void invalidEmail9() throws BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, InvalidEmail_Exception {
-		UserView userView = client.activateUser("teste@teste.teste.");
-	}
-	
-	@Test(expected = EmailExists_Exception.class)
-	public void invalidEmail10() throws BadInit_Exception, InvalidStation_Exception, EmailExists_Exception, InvalidEmail_Exception {
-		UserView userView1 = client.activateUser("teste1@teste1");
-		UserView userView2 = client.activateUser("teste1@teste1");
-	}
-	
+
 	@After
-	public void teardown() {
-		client.testClear();
+	public void tearDown() {
+	}
+
+	@Test
+	public void createUserValidTest() throws EmailExists_Exception, InvalidEmail_Exception, UserNotExists_Exception{
+		client.activateUser(VALID_USER);
+		assertEquals(USER_POINTS, client.getCredit(VALID_USER));
+	}
+		 
+	@Test
+	public void createUserValidTest2() throws EmailExists_Exception, InvalidEmail_Exception, UserNotExists_Exception {
+		String email = new String("sd.teste@tecnico");
+		client.activateUser(email);
+		assertEquals(USER_POINTS, client.getCredit(email));
 	}
 	
+	@Test
+	public void createUserValidTest3() throws EmailExists_Exception, InvalidEmail_Exception, UserNotExists_Exception {
+		String email = new String("sd@tecnico");
+		client.activateUser(email);
+		assertEquals(USER_POINTS, client.getCredit(email));
+	}
+	 
+	 
+	/*
+	 * Tries to create to users with the same name, which should throw an exception
+	 */
+	@Test(expected = EmailExists_Exception.class)
+	public void createUserDuplicateTest() throws EmailExists_Exception, InvalidEmail_Exception {
+		client.activateUser(VALID_USER);
+		client.activateUser(VALID_USER);
+	}
+
+	/*
+	 * Tries to create a user with an invalid email
+	 * Should throw InvalidEmail_Exception
+	 */
+	@Test(expected = InvalidEmail_Exception.class)
+	public void createUserInvalidEmailTest1() throws EmailExists_Exception, InvalidEmail_Exception {
+		String email = new String("@tecnico.ulisboa");
+		client.activateUser(email);			
+	}
+	 
+	/*
+	 * Tries to create a user with an invalid email
+	 * Should throw InvalidEmail_Exception
+	 */
+	@Test(expected = InvalidEmail_Exception.class)
+	public void createUserInvalidEmailTest2() throws EmailExists_Exception, InvalidEmail_Exception {
+		String email = new String("teste");
+		client.activateUser(email);			
+	}
+	 
+
+	/*
+	 * Tries to create a user with an invalid email
+	 * Should throw InvalidEmail_Exception
+	 */
+	@Test(expected = InvalidEmail_Exception.class)
+	public void createUserInvalidEmailTest3() throws EmailExists_Exception, InvalidEmail_Exception {
+		String email = new String("teste@tecnico.");
+		client.activateUser(email);			
+	}
+	 
+	
+	/*
+	 * Tries to create a user with an invalid email
+	 * Should throw InvalidEmail_Exception
+	 */
+	@Test(expected = InvalidEmail_Exception.class)
+	public void createUserInvalidEmailTest4() throws EmailExists_Exception, InvalidEmail_Exception {
+		String email = new String("sd.@tecnico");
+		client.activateUser(email);			
+	}
+	
+	@Test(expected = InvalidEmail_Exception.class)
+	public void createUserInvalidEmailTest5() throws EmailExists_Exception, InvalidEmail_Exception {
+		client.activateUser(null);			
+	}
+	 	 
+	 
 }
