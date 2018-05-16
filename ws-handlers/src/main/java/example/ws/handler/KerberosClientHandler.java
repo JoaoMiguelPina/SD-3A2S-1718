@@ -6,8 +6,12 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.Set;
+
+import javax.xml.bind.DatatypeConverter;
+import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
@@ -18,8 +22,12 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Node;
+
 import pt.ulisboa.tecnico.sdis.kerby.Auth;
 import pt.ulisboa.tecnico.sdis.kerby.BadTicketRequest_Exception;
+import pt.ulisboa.tecnico.sdis.kerby.CipherClerk;
 import pt.ulisboa.tecnico.sdis.kerby.CipheredView;
 import pt.ulisboa.tecnico.sdis.kerby.KerbyException;
 import pt.ulisboa.tecnico.sdis.kerby.SecurityHelper;
@@ -69,6 +77,7 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 	public boolean handleMessage(SOAPMessageContext context) {
 		
 		Boolean outboundElement = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+		CipherClerk cc = new CipherClerk();
 	
 		   	try {
 		   		
@@ -102,6 +111,10 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 					SOAPPart sp = msg.getSOAPPart();
 					SOAPEnvelope se = sp.getEnvelope();
 					
+					
+					// Ticket ---- ------------------------------------------------------------------------
+					
+					
 					// add header
 					SOAPHeader shTicket = se.getHeader();
 					if (shTicket == null)
@@ -110,12 +123,18 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 					// add header element (name, namespace prefix, namespace)
 					System.out.println("Namespace: " + svcn.getNamespaceURI());
 					Name nameTicket = se.createName("ticket", svcn.getPrefix(), svcn.getNamespaceURI());
-					SOAPHeaderElement elementTicket = shTicket.addHeaderElement(nameTicket);
-	
+					SOAPElement elementTicket = shTicket.addHeaderElement(nameTicket);
+					
+					
 					// add header element value
-					elementTicket.addTextNode(cipheredTicket.toString());
+					elementTicket.addTextNode(DatatypeConverter.printBase64Binary(cc.cipherToXMLBytes(cipheredTicket, "ticket")));
 					
 					
+					
+					
+					// Authenticator ------------------------------------------------------------------------
+					
+				
 					// add header
 					SOAPHeader shAuth = se.getHeader();
 					if (shAuth == null)
@@ -123,17 +142,12 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 	
 					// add header element (name, namespace prefix, namespace)
 					Name nameAuth = se.createName("authenticator", svcn.getPrefix(), svcn.getNamespaceURI());
-					SOAPHeaderElement elementAuth = shAuth.addHeaderElement(nameAuth);
-	
+					SOAPElement elementAuth = shAuth.addHeaderElement(nameAuth);
+					
 					// add header element value
-					elementAuth.addTextNode(cipher.toString());
 					
-					
-					System.out.println("CIPHER: " + cipher.toString());
-					System.out.println(sessionKey.toString());
-			        
-	
-			        System.out.println();
+					elementAuth.addTextNode(DatatypeConverter.printBase64Binary(cc.cipherToXMLBytes(cipher, "authenticator")));
+				
 		   		}
 		   		
 		   		else {
@@ -141,21 +155,22 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 		   		}
 				
 			} catch (KerbyClientException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("There was an error while connecting to the KerbyClient.");
 			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("The requested cryptographic algorithm is not available in the environment.");
 			} catch (InvalidKeySpecException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("There was an error while obtaining the client's key.");
 			} catch (KerbyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("There was an error while connecting to Kerby.");
 			} catch (BadTicketRequest_Exception e) {
+				System.out.println("There was an error while requesting the ticket.");
+			} catch (SOAPException e) {
+				System.out.println("Ignoring SOAPException in handler: ");
+				System.out.println(e);
+			} catch (DOMException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (SOAPException e) {
+			} catch (JAXBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
