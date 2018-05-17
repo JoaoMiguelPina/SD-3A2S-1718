@@ -100,7 +100,7 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 					
 					
 					// writing Ticket SOAP message
-					System.out.println("Writing header to OUTbound SOAP messagnkjbhbvhe...");
+					System.out.println("Writing header to OUTbound SOAP message...");
 					
 					QName svcn = (QName) context.get(MessageContext.WSDL_SERVICE);
 					QName opn = (QName) context.get(MessageContext.WSDL_OPERATION);
@@ -121,7 +121,6 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 						shTicket = se.addHeader();
 	
 					// add header element (name, namespace prefix, namespace)
-					System.out.println("Namespace: " + svcn.getNamespaceURI());
 					Name nameTicket = se.createName("ticket", svcn.getPrefix(), svcn.getNamespaceURI());
 					SOAPElement elementTicket = shTicket.addHeaderElement(nameTicket);
 					
@@ -151,7 +150,7 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 		   		}
 		   		
 		   		else {
-		   			System.out.println("MENSAGEM DE INBOUND LOL");
+		   			System.out.println("[DEBUG] Inbound message");
 		   		}
 				
 			} catch (KerbyClientException e) {
