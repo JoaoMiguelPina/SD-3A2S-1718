@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.xml.bind.DatatypeConverter;
@@ -30,6 +31,7 @@ import pt.ulisboa.tecnico.sdis.kerby.BadTicketRequest_Exception;
 import pt.ulisboa.tecnico.sdis.kerby.CipherClerk;
 import pt.ulisboa.tecnico.sdis.kerby.CipheredView;
 import pt.ulisboa.tecnico.sdis.kerby.KerbyException;
+import pt.ulisboa.tecnico.sdis.kerby.RequestTime;
 import pt.ulisboa.tecnico.sdis.kerby.SecurityHelper;
 import pt.ulisboa.tecnico.sdis.kerby.SessionKey;
 import pt.ulisboa.tecnico.sdis.kerby.SessionKeyAndTicketView;
@@ -78,6 +80,9 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 		
 		Boolean outboundElement = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 		CipherClerk cc = new CipherClerk();
+		RequestTime time = null;
+		QName svcn = (QName) context.get(MessageContext.WSDL_SERVICE);
+		QName opn = (QName) context.get(MessageContext.WSDL_OPERATION);
 	
 		   	try {
 		   		
@@ -101,9 +106,6 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 					
 					// writing Ticket SOAP message
 					System.out.println("Writing header to OUTbound SOAP message...");
-					
-					QName svcn = (QName) context.get(MessageContext.WSDL_SERVICE);
-					QName opn = (QName) context.get(MessageContext.WSDL_OPERATION);
 					
 					
 					// get SOAP envelope
@@ -146,11 +148,58 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 					// add header element value
 					
 					elementAuth.addTextNode(DatatypeConverter.printBase64Binary(cc.cipherToXMLBytes(cipher, "authenticator")));
+					
+
+					
+					// put header in a property context
+					
+					context.put("time", auth.getTimeRequest());
+					context.put("sessionKey", sessionKey);
+					
 				
 		   		}
 		   		
 		   		else {
 		   			System.out.println("[DEBUG] Inbound message");
+		   			
+		   		// get SOAP envelope header
+					SOAPMessage msg = context.getMessage();
+					SOAPPart sp = msg.getSOAPPart();
+					SOAPEnvelope se = sp.getEnvelope();
+					SOAPHeader sh = se.getHeader();
+		
+					// check header
+					if (sh == null) {
+						System.out.println("Header not found.");
+						return true;
+					}
+					
+					// get first header element
+					Name nameTime = se.createName("reqtime", svcn.getPrefix(), svcn.getNamespaceURI());
+					Iterator<?> it = sh.getChildElements(nameTime);
+					// check header element
+					if (!it.hasNext()) {
+						System.out.println("Header element not found.");
+						return true;
+					}
+					
+					
+					SOAPElement element = (SOAPElement) it.next();
+					
+		
+					// get header element value
+					String valueString = element.getValue();
+					CipheredView cvTime = cc.cipherFromXMLBytes(DatatypeConverter.parseBase64Binary(valueString));
+					Key sk = ((SessionKey) context.get("sessionKey")).getKeyXY();
+					
+					RequestTime rt = new RequestTime(cvTime, sk);
+					
+
+					
+					if (rt.getTimeRequest().equals(context.get("time"))) System.out.println("Ticket date confirmed.");
+					else throw new BadTicketRequest_Exception("Ticket date is not valid.", null);
+		   			
+		   			
 		   		}
 				
 			} catch (KerbyClientException e) {

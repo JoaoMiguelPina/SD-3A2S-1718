@@ -42,6 +42,7 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 	private static final String VALID_SERVER_NAME = "binas@A46.binas.org";
 	private static final String VALID_SERVER_PASSWORD = "4N8v8vLt";
 	private static final int VALID_DURATION = 30;
+	public static final String CONTEXT_PROPERTY = "my.property";
 	
 	protected static KerbyClient client;
 	protected static KerbyClient server;
@@ -56,6 +57,10 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 		
 		Boolean outboundElement = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 		CipherClerk cc = new CipherClerk();
+		RequestTime time = null;
+		QName svcn = (QName) context.get(MessageContext.WSDL_SERVICE);
+		QName opn = (QName) context.get(MessageContext.WSDL_OPERATION);
+		Key sessionKey = null;
 		
 
 			
@@ -65,6 +70,37 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 			
 				if (outboundElement.booleanValue()) {
 					System.out.println("[Debug] Outbound message");
+					
+					// get SOAP envelope
+					SOAPMessage msg = context.getMessage();
+					SOAPPart sp = msg.getSOAPPart();
+					SOAPEnvelope se = sp.getEnvelope();
+					
+					System.out.println("[Debug] DE PUTA MADRE");
+					
+					// add header
+					SOAPHeader shTime = se.getHeader();
+					if (shTime == null)
+						shTime = se.addHeader();
+					
+					System.out.println("[Debug] HELIO PARABENS");
+	
+					// add header element (name, namespace prefix, namespace)
+					Name nameTime = se.createName("reqtime", svcn.getPrefix(), svcn.getNamespaceURI());
+					System.out.println("[Debug] ANTES DO SABAO");
+					SOAPElement elementTime = shTime.addHeaderElement(nameTime);
+					
+					sessionKey = (Key) context.get("sessionKey");
+					time = (RequestTime) context.get("time");
+					System.out.println("[Debug] DEPOIS DO SABAO");
+					
+					System.out.println("[Debug] TIME NO OUTBOUND: " + context.get("time"));
+					System.out.println("[Debug] SESSIONKEY NO OUTBOUND: " + context.get("sessionKey"));
+					
+					// add header element value
+					elementTime.addTextNode(DatatypeConverter.printBase64Binary(cc.cipherToXMLBytes(time.cipher(sessionKey), "reqtime")));
+					
+					System.out.println("[Debug] BRUNO DE CARALHO");
 					
 					
 				}
@@ -84,11 +120,6 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 						return true;
 					}
 					
-					QName svcn = (QName) context.get(MessageContext.WSDL_SERVICE);
-					QName opn = (QName) context.get(MessageContext.WSDL_OPERATION);
-					
-					
-		
 					// get first header element
 					Name nameTicket = se.createName("ticket", svcn.getPrefix(), svcn.getNamespaceURI());
 					Name nameAuth = se.createName("authenticator", svcn.getPrefix(), svcn.getNamespaceURI());
@@ -116,20 +147,22 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 					final Key serverKey = getKey(VALID_SERVER_PASSWORD);
 					
 				    Ticket ticket = new Ticket(cvTicket, serverKey);
+				    sessionKey = ticket.getKeyXY();
 				    ticket.validate();
 				        
-				    Auth authServer = new Auth(cvAuth, ticket.getKeyXY());
+				    Auth authServer = new Auth(cvAuth, sessionKey);
 				    authServer.validate();
 				        
-				    RequestTime time = new RequestTime(cvAuth, ticket.getKeyXY());
+				    time = new RequestTime(cvAuth, sessionKey);
+					System.out.println("JORGE JESUS" + time.toString());
+
 					
+					// put header in a property context
 					
-					
-	//				// put header in a property context
-	//				context.put(CONTEXT_PROPERTY, value);
-	//				// set property scope to application client/server class can
-	//				// access it
-	//				context.setScope(CONTEXT_PROPERTY, Scope.APPLICATION);
+					context.put("time", time);
+					System.out.println("VAI PO CARALHO PINA");
+					context.put("sessionKey", sessionKey);
+					System.out.println("VAI PO CARALHO HELIO");
 						
 	
 				}
