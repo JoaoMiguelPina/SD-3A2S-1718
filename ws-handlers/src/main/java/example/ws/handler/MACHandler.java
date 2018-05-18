@@ -154,8 +154,6 @@ public class MACHandler implements SOAPHandler<SOAPMessageContext> {
 					return true;
 				}
 				
-	
-				
 				
 				SOAPElement element = (SOAPElement) it.next();
 				

@@ -38,6 +38,7 @@ public class BinasAuthorizationHandler implements SOAPHandler<SOAPMessageContext
 
 	@Override
 	public boolean handleMessage(SOAPMessageContext context) {  
+		
 		return true;
 	}
 
