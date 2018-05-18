@@ -58,69 +58,67 @@ public class MACHandler implements SOAPHandler<SOAPMessageContext> {
 				
 				System.out.println("OUBOUND");
 			
-//				// get SOAP envelope
-//				SOAPMessage msg = context.getMessage();
-//				SOAPPart sp = msg.getSOAPPart();
-//				SOAPEnvelope se = sp.getEnvelope();
-//				SOAPBody sb = se.getBody();
-//				
-//				System.out.println("QUAU FOI");
-//				
-//				// add header
-//				SOAPHeader shMAC = se.getHeader();
-//				if (shMAC == null)
-//					shMAC = se.addHeader();
-//				
-//				System.out.println("A EMPRESA");
-//				
-//
-//				// add header element (name, namespace prefix, namespace)
-//				Name mac = se.createName("mac", svcn.getPrefix(), svcn.getNamespaceURI());
-//				SOAPElement elementMAC = shMAC.addHeaderElement(mac);
-//				
-//				System.out.println("QUE DESENVULVEU");
-//
-//				// generate AES secret key
-//				
-//				
-//				System.out.println("MAPA DO CONTEXT" + context.toString());
-//				SessionKey keyhjhh = (SessionKey) context.get("sessionKey");
-//				Key key = keyhjhh.getKeyXY();
-//				
-//				
-////				Key key1 = (Key) context.get("sessionKey");
-//				System.out.println("gaja chata caralho" );
-//				
-//			
-//				
-//				context.toString();
-//				
-//				System.out.println("U IPHONE");
-//				
-//				NodeList list = sb.getChildNodes();
-//				
-//				System.out.println("TAMANHO DO LIST" + list.getLength());
-//				
-//				ByteArrayOutputStream sw = new ByteArrayOutputStream();
-//				 TransformerFactory.newInstance().newTransformer().transform(
-//		                    new DOMSource(sb.getFirstChild()),
-//		                    new StreamResult(sw));
-//				 
-//				 byte[] teste = sw.toByteArray();
-//
-//				// make MAC
-//				System.out.println("SOAP BODY: " + sb.toString());
-//				byte[] cipherDigest = makeMAC(teste, key);
-//				System.out.println("A NOKIA");
-//				System.out.println(printHexBinary(cipherDigest));
-//				
-//				// add header element value
-//				
-//				 
-//				
-//				elementMAC.addTextNode(DatatypeConverter.printBase64Binary(cipherDigest));
-//
-//				System.out.println("OU O APPLE " + DatatypeConverter.printBase64Binary(cipherDigest));
+				// get SOAP envelope
+				SOAPMessage msg = context.getMessage();
+				SOAPPart sp = msg.getSOAPPart();
+				SOAPEnvelope se = sp.getEnvelope();
+				SOAPBody sb = se.getBody();
+				
+				System.out.println("QUAU FOI");
+				
+				// add header
+				SOAPHeader shMAC = se.getHeader();
+				if (shMAC == null)
+					shMAC = se.addHeader();
+				
+				System.out.println("A EMPRESA");
+				
+
+				// add header element (name, namespace prefix, namespace)
+				Name mac = se.createName("mac", svcn.getPrefix(), svcn.getNamespaceURI());
+				SOAPElement elementMAC = shMAC.addHeaderElement(mac);
+				
+				System.out.println("QUE DESENVULVEU");
+
+				// generate AES secret key
+				
+				
+				System.out.println("MAPA DO CONTEXT" + context.toString());
+				Key key = (Key) context.get("sessionKey");
+			
+//				Key key1 = (Key) context.get("sessionKey");
+				System.out.println("gaja chata caralho" );
+				
+			
+				
+				context.toString();
+				
+				System.out.println("U IPHONE");
+				
+				NodeList list = sb.getChildNodes();
+				
+				System.out.println("TAMANHO DO LIST" + list.getLength());
+				
+				ByteArrayOutputStream sw = new ByteArrayOutputStream();
+				 TransformerFactory.newInstance().newTransformer().transform(
+		                    new DOMSource(sb.getFirstChild()),
+		                    new StreamResult(sw));
+				 
+				 byte[] teste = sw.toByteArray();
+
+				// make MAC
+				System.out.println("SOAP BODY: " + sb.toString());
+				byte[] cipherDigest = makeMAC(teste, key);
+				System.out.println("A NOKIA");
+				System.out.println(printHexBinary(cipherDigest));
+				
+				// add header element value
+				
+				 
+				
+				elementMAC.addTextNode(DatatypeConverter.printBase64Binary(cipherDigest));
+
+				System.out.println("OU O APPLE " + DatatypeConverter.printBase64Binary(cipherDigest));
 
 			}
 			
@@ -131,59 +129,70 @@ public class MACHandler implements SOAPHandler<SOAPMessageContext> {
 //				
 //
 //				
-//				// get SOAP envelope header
-//				SOAPMessage msg = context.getMessage();
-//				SOAPPart sp = msg.getSOAPPart();
-//				SOAPEnvelope se = sp.getEnvelope();
-//				SOAPHeader sh = se.getHeader();
-//			
+				// get SOAP envelope header
+				SOAPMessage msg = context.getMessage();
+				SOAPPart sp = msg.getSOAPPart();
+				SOAPEnvelope se = sp.getEnvelope();
+				SOAPHeader sh = se.getHeader();
+				SOAPBody sb = se.getBody();
+			
 //	
-//				// check header
-//				if (sh == null) {
-//					System.out.println("[MAC Handler] [Inbound] Header not found.");
-//					return true;
-//				}
+				// check header
+				if (sh == null) {
+					System.out.println("[MAC Handler] [Inbound] Header not found.");
+					return true;
+				}
+				
+				
+				
+				// get first header element
+				Name nameMAC = se.createName("mac", svcn.getPrefix(), svcn.getNamespaceURI());
+				Iterator<?> it = sh.getChildElements(nameMAC);
+				// check header element
+				if (!it.hasNext()) {
+					System.out.println("[MAC Handler] [Inbound] Header element not found.");
+					return true;
+				}
+				
+	
+				
+				
+				SOAPElement element = (SOAPElement) it.next();
+				
+
+				Key keyInbound = (Key) context.get("sessionKey");
+	
+				// get header element value
+				String valueString = element.getValue();
+				System.out.println("NESPRESSO GET VALUE: " + valueString);
+				
+				byte[] valueByteArray = DatatypeConverter.parseBase64Binary(valueString);
+				System.out.println("DELTA");
+				
+				ByteArrayOutputStream sw = new ByteArrayOutputStream();
+				 TransformerFactory.newInstance().newTransformer().transform(
+		                    new DOMSource(sb.getFirstChild()),
+		                    new StreamResult(sw));
+				 
+				 byte[] teste = sw.toByteArray();
+
+				// make MAC
+				System.out.println("SOAP BODY: " + sb.toString());
+				byte[] cipherDigest = makeMAC(teste, keyInbound);
+				
+				if (Arrays.equals(valueByteArray, cipherDigest)) System.out.println("MESMO MAC! UAU BUE BONS");
+				else System.out.println("FODE A TUA MAE E FAZ FILHOS DA PUTA");
 //				
-//				
-//				
-//				// get first header element
-//				Name nameMAC = se.createName("mac", svcn.getPrefix(), svcn.getNamespaceURI());
-//				Iterator<?> it = sh.getChildElements(nameMAC);
-//				// check header element
-//				if (!it.hasNext()) {
-//					System.out.println("[MAC Handler] [Inbound] Header element not found.");
-//					return true;
-//				}
-//				
-//	
-//				
-//				
-//				SOAPElement element = (SOAPElement) it.next();
-//				
-//
-//				
-//	
-//				// get header element value
-//				String valueString = element.getValue();
-//				System.out.println("NESPRESSO GET VALUE: " + valueString);
-//				
-//				byte[] valueByteArray = DatatypeConverter.parseBase64Binary(valueString);
-//				System.out.println("DELTA");
-//				byte[] plainBytes = valueString.getBytes();
-//				System.out.println("PINOCA");
-//				
-//				
-//				//SessionKey keyhjhh = (SessionKey) context.get("sessionKey");
-//				
-//				
-////				System.out.println("ANANAS " + context.get("sessionKey").toString());
-//				//Key keyCenas = keyhjhh.getKeyXY();
-////			
-////				// verify the MAC
-////				System.out.println("Verifying ...");
-////				boolean result = verifyMAC(valueByteArray, plainBytes, keyhjhh);
-////				if (result) System.out.println("MESMO MAC! UAU BUE BONS");
-////				else System.out.println("FODE A TUA MAE E FAZ FILHOS DA PUTA");
+				
+////				
+////				
+//////				System.out.println("ANANAS " + context.get("sessionKey").toString());
+//////			
+//				// verify the MAC
+//				System.out.println("Verifying ...");
+//				boolean result = verifyMAC(valueByteArray, plainBytes, keyInbound);
+//				if (result) System.out.println("MESMO MAC! UAU BUE BONS");
+//				else System.out.println("FODE A TUA MAE E FAZ FILHOS DA PUTA");
 				
 			}
 			
@@ -225,10 +234,10 @@ public class MACHandler implements SOAPHandler<SOAPMessageContext> {
 	 * Calculates new digest from text and compare it to the to deciphered
 	 * digest.
 	 */
-	private static boolean verifyMAC(byte[] cipherDigest, byte[] bytes, SessionKey keyhjhh) throws Exception {
+	private static boolean verifyMAC(byte[] cipherDigest, byte[] bytes, Key key) throws Exception {
 
 		Mac cipher = Mac.getInstance(MAC_ALGO);
-		cipher.init((Key) keyhjhh);
+		cipher.init(key);
 		byte[] cipheredBytes = cipher.doFinal(bytes);
 		return Arrays.equals(cipherDigest, cipheredBytes);
 	}

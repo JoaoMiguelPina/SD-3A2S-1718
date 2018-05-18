@@ -99,7 +99,6 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 					CipheredView cipheredTicket = result.getTicket();
 					
 					SessionKey sessionKey = new SessionKey(cipheredSessionKey, clientKey); 
-					context.put("sessionKey", sessionKey);
 					
 					Auth auth = new Auth(VALID_CLIENT_NAME, new Date());
 					CipheredView cipher = auth.cipher(sessionKey.getKeyXY());
@@ -155,7 +154,7 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 					// put header in a property context
 					
 					context.put("time", auth.getTimeRequest());
-					
+					context.put("sessionKey", sessionKey.getKeyXY());
 					
 				
 		   		}
@@ -191,7 +190,7 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 					// get header element value
 					String valueString = element.getValue();
 					CipheredView cvTime = cc.cipherFromXMLBytes(DatatypeConverter.parseBase64Binary(valueString));
-					Key sk = ((SessionKey) context.get("sessionKey")).getKeyXY();
+					Key sk = (Key) context.get("sessionKey");
 					
 					RequestTime rt = new RequestTime(cvTime, sk);
 					

@@ -29,7 +29,6 @@ import pt.ulisboa.tecnico.sdis.kerby.CipheredView;
 import pt.ulisboa.tecnico.sdis.kerby.KerbyException;
 import pt.ulisboa.tecnico.sdis.kerby.RequestTime;
 import pt.ulisboa.tecnico.sdis.kerby.SecurityHelper;
-import pt.ulisboa.tecnico.sdis.kerby.SessionKey;
 import pt.ulisboa.tecnico.sdis.kerby.Ticket;
 import pt.ulisboa.tecnico.sdis.kerby.cli.KerbyClient;
 import pt.ulisboa.tecnico.sdis.kerby.cli.KerbyClientException;
@@ -61,7 +60,7 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 		RequestTime time = null;
 		QName svcn = (QName) context.get(MessageContext.WSDL_SERVICE);
 		QName opn = (QName) context.get(MessageContext.WSDL_OPERATION);
-		SessionKey sessionKey = null;
+		Key sessionKey = null;
 		
 
 			
@@ -91,7 +90,7 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 					System.out.println("[Debug] ANTES DO SABAO");
 					SOAPElement elementTime = shTime.addHeaderElement(nameTime);
 					
-					sessionKey = (SessionKey) context.get("sessionKey");
+					sessionKey = (Key) context.get("sessionKey");
 					time = (RequestTime) context.get("time");
 					System.out.println("[Debug] DEPOIS DO SABAO");
 					
@@ -99,7 +98,7 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 					System.out.println("[Debug] SESSIONKEY NO OUTBOUND: " + context.get("sessionKey"));
 					
 					// add header element value
-					elementTime.addTextNode(DatatypeConverter.printBase64Binary(cc.cipherToXMLBytes(time.cipher(sessionKey.getKeyXY()), "reqtime")));
+					elementTime.addTextNode(DatatypeConverter.printBase64Binary(cc.cipherToXMLBytes(time.cipher(sessionKey), "reqtime")));
 					
 					System.out.println("[Debug] BRUNO DE CARALHO");
 					
@@ -108,7 +107,7 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 				
 				else {
 					
-					final Key serverKey = getKey(VALID_SERVER_PASSWORD);
+					
 					// get SOAP envelope header
 					SOAPMessage msg = context.getMessage();
 					SOAPPart sp = msg.getSOAPPart();
@@ -145,17 +144,16 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 					valueString = element.getValue();
 					CipheredView cvAuth = cc.cipherFromXMLBytes(DatatypeConverter.parseBase64Binary(valueString));
 					
-					
+					final Key serverKey = getKey(VALID_SERVER_PASSWORD);
 					
 				    Ticket ticket = new Ticket(cvTicket, serverKey);
+				    sessionKey = ticket.getKeyXY();
 				    ticket.validate();
-				    sessionKey = (SessionKey) ticket.getKeyXY();
-				    context.put("sessionKey", (SessionKey) sessionKey);
 				        
-				    Auth authServer = new Auth(cvAuth, sessionKey.getKeyXY());
+				    Auth authServer = new Auth(cvAuth, sessionKey);
 				    authServer.validate();
 				        
-				    time = new RequestTime(cvAuth, sessionKey.getKeyXY());
+				    time = new RequestTime(cvAuth, sessionKey);
 					System.out.println("JORGE JESUS" + time.toString());
 
 					
@@ -163,7 +161,7 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 					
 					context.put("time", time);
 					System.out.println("VAI PO CARALHO PINA");
-					
+					context.put("sessionKey", sessionKey);
 					System.out.println("VAI PO CARALHO HELIO");
 						
 	
