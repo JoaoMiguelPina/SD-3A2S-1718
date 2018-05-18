@@ -53,6 +53,8 @@ public class BinasClientApp {
         String result = client.testPing("client");
         String email = new String("alice@A46.binas.org");
 		client.activateUser(email);
+		client.rentBina("A46_Station1", email);
+		client.returnBina("A46_Station1", email);
         System.out.print(result);
         
 	 }

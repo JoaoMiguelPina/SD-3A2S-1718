@@ -14,6 +14,13 @@
             <handler-class>example.ws.handler.MACHandler</handler-class>
         </handler>
 
+        <!-- EVILHANDLER -->
+        <!-- Descomentar para demonstração de ataque -->
+
+        <!--handler>
+            <handler-class>example.ws.handler.EvilHandler</handler-class>
+        </handler-->
+
         <handler>
             <handler-class>example.ws.handler.EndpointAddressHandler</handler-class>
         </handler>

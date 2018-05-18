@@ -1,15 +1,14 @@
 package example.ws.handler;
 
-import static javax.xml.bind.DatatypeConverter.printHexBinary;
-import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
+import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
-import javax.crypto.SecretKey;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
@@ -30,10 +29,7 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
-import org.w3c.dom.NodeList;
 import pt.ulisboa.tecnico.sdis.kerby.CipherClerk;
-import pt.ulisboa.tecnico.sdis.kerby.CipheredView;
-import pt.ulisboa.tecnico.sdis.kerby.SessionKey;
 
 
 public class MACHandler implements SOAPHandler<SOAPMessageContext> {
@@ -43,8 +39,6 @@ public class MACHandler implements SOAPHandler<SOAPMessageContext> {
 	/** Plain text bytes. */
 	final byte[] plainBytes = plainText.getBytes();
 
-	/** Symmetric cryptography algorithm. */
-	private static final String SYM_ALGO = "AES";
 	/** Message authentication code algorithm. */
 	private static final String MAC_ALGO = "HmacSHA256";
 
@@ -66,7 +60,7 @@ public class MACHandler implements SOAPHandler<SOAPMessageContext> {
 				SOAPMessage msg = context.getMessage();
 				SOAPPart sp = msg.getSOAPPart();
 				SOAPEnvelope se = sp.getEnvelope();
-				SOAPBody sb = se.getBody();
+				se.getBody();
 				
 				// add header
 				SOAPHeader shMAC = se.getHeader();
@@ -77,7 +71,7 @@ public class MACHandler implements SOAPHandler<SOAPMessageContext> {
 				// add header element (name, namespace prefix, namespace)
 				Name mac = se.createName("mac", svcn.getPrefix(), svcn.getNamespaceURI());
 				SOAPElement elementMAC = shMAC.addHeaderElement(mac);
-				
+			
 
 				// generate AES secret key
 				Key key = (Key) context.get("sessionKey");
@@ -87,24 +81,18 @@ public class MACHandler implements SOAPHandler<SOAPMessageContext> {
 				
 				context.toString();
 				
+				DOMSource source = new DOMSource(context.getMessage().getSOAPBody());
+				StringWriter stringResult = new StringWriter();
 				
-				NodeList list = sb.getChildNodes();
 				
-				ByteArrayOutputStream sw = new ByteArrayOutputStream();
-				 TransformerFactory.newInstance().newTransformer().transform(
-		                    new DOMSource(sb.getFirstChild()),
-		                    new StreamResult(sw));
-				 
-				 byte[] teste = sw.toByteArray();
+				 TransformerFactory.newInstance().newTransformer().transform(source, new StreamResult(stringResult));
+				 String message = stringResult.toString();
+				 byte[] teste = message.getBytes();
 
 				// make MAC
 				byte[] cipherDigest = makeMAC(teste, key);
-				System.out.println(printHexBinary(cipherDigest));
 				
 				// add header element value
-				
-				 
-				
 				elementMAC.addTextNode(DatatypeConverter.printBase64Binary(cipherDigest));
 
 
@@ -119,7 +107,7 @@ public class MACHandler implements SOAPHandler<SOAPMessageContext> {
 				SOAPPart sp = msg.getSOAPPart();
 				SOAPEnvelope se = sp.getEnvelope();
 				SOAPHeader sh = se.getHeader();
-				SOAPBody sb = se.getBody();
+				se.getBody();
 			
 				// check header
 				if (sh == null) {
@@ -149,18 +137,21 @@ public class MACHandler implements SOAPHandler<SOAPMessageContext> {
 				
 				byte[] valueByteArray = DatatypeConverter.parseBase64Binary(valueString);
 				
-				ByteArrayOutputStream sw = new ByteArrayOutputStream();
-				 TransformerFactory.newInstance().newTransformer().transform(
-		                    new DOMSource(sb.getFirstChild()),
-		                    new StreamResult(sw));
-				 
-				 byte[] teste = sw.toByteArray();
+				DOMSource source = new DOMSource(context.getMessage().getSOAPBody());
+				StringWriter stringResult = new StringWriter();
+				
+
+				TransformerFactory.newInstance().newTransformer().transform(source, new StreamResult(stringResult));
+				String message = stringResult.toString();
+				byte[] test = message.getBytes();
+				
 
 				// make MAC
-				byte[] cipherDigest = makeMAC(teste, keyInbound);
+				byte[] cipherDigest = makeMAC(test, keyInbound);
+				
 				
 				if (Arrays.equals(valueByteArray, cipherDigest)) System.out.println("[MACHandler] The MACs match!");
-				else throw new RuntimeException();
+				else throw new RuntimeException("[MACHandler] The MACs don't match!");
 				
 			}
 			
@@ -173,9 +164,11 @@ public class MACHandler implements SOAPHandler<SOAPMessageContext> {
 		} catch (SOAPException e) {
 			System.out.print("Ignoring SOAPException in handler: ");
 			System.out.println(e);
-		} catch (Exception e) {
-			System.out.println("[MACHandler] There as an error while creating the MAC.");
-		}
+		} catch (InvalidKeyException e) {
+			System.out.println("[MACHandler] The key inserted while generating MAC is not valid.");
+		} catch (NoSuchAlgorithmException e) {
+			System.out.println("The requested cryptographic algorithm is not available in the environment.");
+		} 
 		
 		return true;
 	}
@@ -198,8 +191,10 @@ public class MACHandler implements SOAPHandler<SOAPMessageContext> {
 		return null;
 	}
 	
-	/** Makes a message authentication code. */
-	private static byte[] makeMAC(byte[] bytes, Key key) throws Exception {
+	/** Makes a message authentication code. 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException */
+	private static byte[] makeMAC(byte[] bytes, Key key) throws NoSuchAlgorithmException, InvalidKeyException {
 
 		Mac cipher = Mac.getInstance(MAC_ALGO);
 		cipher.init(key);
@@ -208,17 +203,6 @@ public class MACHandler implements SOAPHandler<SOAPMessageContext> {
 		return cipherDigest;
 	}
 
-	/**
-	 * Calculates new digest from text and compare it to the to deciphered
-	 * digest.
-	 */
-	private static boolean verifyMAC(byte[] cipherDigest, byte[] bytes, Key key) throws Exception {
-
-		Mac cipher = Mac.getInstance(MAC_ALGO);
-		cipher.init(key);
-		byte[] cipheredBytes = cipher.doFinal(bytes);
-		return Arrays.equals(cipherDigest, cipheredBytes);
-	}
 
 
 

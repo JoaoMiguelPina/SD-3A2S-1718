@@ -15,11 +15,9 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.MessageContext.Scope;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
@@ -36,12 +34,7 @@ import pt.ulisboa.tecnico.sdis.kerby.cli.KerbyClientException;
 
 public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 	
-	private static SecureRandom randomGenerator = new SecureRandom();
-	private static final String VALID_CLIENT_NAME = "alice@A46.binas.org";
-	private static final String VALID_CLIENT_PASSWORD = "jrUiRXG";
-	private static final String VALID_SERVER_NAME = "binas@A46.binas.org";
 	private static final String VALID_SERVER_PASSWORD = "4N8v8vLt";
-	private static final int VALID_DURATION = 30;
 	public static final String CONTEXT_PROPERTY = "my.property";
 	
 	protected static KerbyClient client;
@@ -59,7 +52,7 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 		CipherClerk cc = new CipherClerk();
 		RequestTime time = null;
 		QName svcn = (QName) context.get(MessageContext.WSDL_SERVICE);
-		QName opn = (QName) context.get(MessageContext.WSDL_OPERATION);
+		context.get(MessageContext.WSDL_OPERATION);
 		Key sessionKey = null;
 		
 
