@@ -69,38 +69,29 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 			
 			
 				if (outboundElement.booleanValue()) {
-					System.out.println("[Debug] Outbound message");
+					System.out.println("OUTbound SOAP message...");
 					
 					// get SOAP envelope
 					SOAPMessage msg = context.getMessage();
 					SOAPPart sp = msg.getSOAPPart();
 					SOAPEnvelope se = sp.getEnvelope();
 					
-					System.out.println("[Debug] DE PUTA MADRE");
 					
 					// add header
 					SOAPHeader shTime = se.getHeader();
 					if (shTime == null)
 						shTime = se.addHeader();
-					
-					System.out.println("[Debug] HELIO PARABENS");
 	
 					// add header element (name, namespace prefix, namespace)
 					Name nameTime = se.createName("reqtime", svcn.getPrefix(), svcn.getNamespaceURI());
-					System.out.println("[Debug] ANTES DO SABAO");
 					SOAPElement elementTime = shTime.addHeaderElement(nameTime);
 					
 					sessionKey = (Key) context.get("sessionKey");
 					time = (RequestTime) context.get("time");
-					System.out.println("[Debug] DEPOIS DO SABAO");
-					
-					System.out.println("[Debug] TIME NO OUTBOUND: " + context.get("time"));
-					System.out.println("[Debug] SESSIONKEY NO OUTBOUND: " + context.get("sessionKey"));
-					
+
 					// add header element value
 					elementTime.addTextNode(DatatypeConverter.printBase64Binary(cc.cipherToXMLBytes(time.cipher(sessionKey), "reqtime")));
 					
-					System.out.println("[Debug] BRUNO DE CARALHO");
 					
 					
 				}
@@ -149,42 +140,35 @@ public class KerberosServerHandler implements SOAPHandler<SOAPMessageContext> {
 				    Ticket ticket = new Ticket(cvTicket, serverKey);
 				    sessionKey = ticket.getKeyXY();
 				    ticket.validate();
+				    context.put("ticketEmail", ticket.getX());
 				        
 				    Auth authServer = new Auth(cvAuth, sessionKey);
 				    authServer.validate();
+				    context.put("authEmail", authServer.getX());
 				        
 				    time = new RequestTime(cvAuth, sessionKey);
-					System.out.println("JORGE JESUS" + time.toString());
 
 					
 					// put header in a property context
 					
 					context.put("time", time);
-					System.out.println("VAI PO CARALHO PINA");
 					context.put("sessionKey", sessionKey);
-					System.out.println("VAI PO CARALHO HELIO");
-						
 	
 				}
 			
 			} catch (KerbyClientException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("There was an error while connecting to the KerbyClient.");
 			} catch (SOAPException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Ignoring SOAPException in handler: ");
+				System.out.println(e);
 			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("There was an error while marshelling or unmarshelling the ticket.");
 			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("The requested cryptographic algorithm is not available in the environment.");
 			} catch (InvalidKeySpecException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("There was an error while obtaining the client's key.");
 			} catch (KerbyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("There was an error while connecting to Kerby.");
 			}
 	        
 		return true;

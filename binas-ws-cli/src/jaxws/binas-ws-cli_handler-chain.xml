@@ -18,7 +18,6 @@
             <handler-class>example.ws.handler.EndpointAddressHandler</handler-class>
         </handler>
 
-
         <handler>
             <handler-class>example.ws.handler.PrettyLogHandler</handler-class>
         </handler>

@@ -41,10 +41,9 @@ import pt.ulisboa.tecnico.sdis.kerby.cli.KerbyClientException;
 public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 	
 	private static SecureRandom randomGenerator = new SecureRandom();
-	private static final String VALID_CLIENT_NAME = "alice@A46.binas.org";
-	private static final String VALID_CLIENT_PASSWORD = "jrUiRXG";
-	private static final String VALID_SERVER_NAME = "binas@A46.binas.org";
-	private static final String VALID_SERVER_PASSWORD = "4N8v8vLt";
+	private static String VALID_CLIENT_NAME = "alice@A46.binas.org";
+	private static String VALID_CLIENT_PASSWORD = "jrUiRXG";
+	private static String VALID_SERVER_NAME = "binas@A46.binas.org";
 	private static final int VALID_DURATION = 30;
 	
 	protected static KerbyClient client;
@@ -160,7 +159,7 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 		   		}
 		   		
 		   		else {
-		   			System.out.println("[DEBUG] Inbound message");
+		   			System.out.println("Reading INbound SOAP message...");
 		   			
 		   		// get SOAP envelope header
 					SOAPMessage msg = context.getMessage();
@@ -216,15 +215,10 @@ public class KerberosClientHandler implements SOAPHandler<SOAPMessageContext> {
 				System.out.println("Ignoring SOAPException in handler: ");
 				System.out.println(e);
 			} catch (DOMException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("There was an error while converting the bytes.");
 			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("There was an error while marshelling or unmarshelling the ticket.");
 			}
-			
-
-	        
 	        
 		return true;
 	}

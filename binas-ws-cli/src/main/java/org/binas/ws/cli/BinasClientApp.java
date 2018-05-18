@@ -51,6 +51,8 @@ public class BinasClientApp {
 
         System.out.println("Invoke ping()...");
         String result = client.testPing("client");
+        String email = new String("alice@A46.binas.org");
+		client.activateUser(email);
         System.out.print(result);
         
 	 }
